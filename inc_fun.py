@@ -42,7 +42,7 @@ class Window_fun(object):
             
             for n in range(10):
                 
-                str_n = "任务" + str(id_task) + 'File index {0}'.format(n)
+                str_n = "任务[" + str(id_task) + '] -- File index {0}'.format(n)
                 self.run_show_main.addItem(str_n)
                 #QApplication.processEvents()
             
