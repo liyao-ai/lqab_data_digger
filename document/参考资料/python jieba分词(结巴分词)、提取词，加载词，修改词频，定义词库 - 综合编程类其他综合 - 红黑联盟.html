@@ -1,0 +1,602 @@
+<!DOCTYPE html PUBliC "-//W3C//dtD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/dtD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<link rel="stylesheet" href="https://statics.2cto.com/css/articles.css" type="text/css" />
+<link href="https://statics.2cto.com/css/dialog.css" rel="stylesheet" type="text/css" />
+<title>python jieba分词(结巴分词)、提取词，加载词，修改词频，定义词库 - 综合编程类其他综合 - 红黑联盟</title>
+<meta name="description" content="python jieba分词(结巴分词)、提取词，加载词，修改词频，定义词库。“结巴”中文分词：做最好的 Python 中文分词组件,分词模块jieba，它是python比较好用的分词模块, 支持中文简体，繁体分词，还支持自定义词库。" />
+<meta http-equiv="mobile-agent" content="format=html5;url=https://m.2cto.com/kf/201708/665045.html" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link type="text/css" rel="stylesheet" href="https://statics.2cto.com/js/syntaxhighlighter/styles/shCore.css"/>
+<link type="text/css" rel="stylesheet" href="https://statics.2cto.com/js/syntaxhighlighter/styles/shThemeDefault.css"/>
+<script src="https://statics.2cto.com/js/uaredirect.js" type="text/javascript"></script>
+<script type="text/javascript">uaredirect("https://m.2cto.com/kf/201708/665045.html");</script>
+<script src="https://statics.2cto.com/js/gg.js"></script>
+<script type="application/ld+json">
+		{
+                "@context": "https://zhanzhang.baidu.com/contexts/cambrian.jsonld",
+                "@id": "https://www.2cto.com/kf/201708/665045.html",
+                "pubDate": "2017-08-05T10:02:57",
+				"upDate":"2017-08-05T10:03:35",
+         }
+
+</script>
+</head>
+<body>
+<div class="line_top_box">
+	<dl class="top_box_left">
+		<dd class="left_logo"><a href="/"></a></dd>
+		<dd class="left_menu_link">
+																<a class="first" href="/news/">资讯</a>
+													<a href="/article/">安全</a>
+													<a href="https://bbs.2cto.com">论坛</a>
+													<a href="/soft/">下载</a>
+													<a href="https://book.2cto.com">读书</a>
+													<a href="/kf/">程序开发</a>
+													<a href="/database/">数据库</a>
+													<a href="/os/">系统</a>
+													<a href="/net/">网络</a>
+													<a href="/ebook/">电子书</a>
+													<a href="/weixin/">微信学院</a>
+													<a href="https://zz.2cto.com/">站长学院</a>
+													<a href="/qq/">QQ</a>
+													<a href="/px/">考试</a>
+														</dd>
+	</dl>
+</div>
+<div class="line_top_lmbox">
+	<dl class="lmpic"><dt><i></i>频道栏目</dt></dl>
+	<dl class="lmlinkbox"><dd>
+										<a class='Channel' href='/kf/ware/'>软件开发</a>|
+							<a class='Channel' href='/kf/qianduan/'>web前端</a>|
+							<a class='Channel' href='/kf/web/'>Web开发</a>|
+							<a class='Channel' href='/kf/yidong/'>移动开发</a>|
+							<a class='Channel' href='/kf/all/'>综合编程</a>|
+								</dd></dl>
+	<div class="login" id="userbar">
+		<div class="unlogin"><a class="loginbtn" href="//home.2cto.com/?forward=&siteid=1" target="_blank">登录</a><a class="regbtn" href="//home.2cto.com/index.php/index/regedit" target="_blank">注册</a></div>
+	</div>
+</div>
+<div class="ibox mt8 mb8">
+<!-- 2cto_通栏 -->
+<script type="text/javascript">cto_A_D("2cto_1");</script>
+</div>
+<div class="wrapper">
+	<div class="box_left">
+		
+		<dl class="box_p">
+			<dd class="pRight"><a href="/">首页</a><span> > </span><a href="https://www.2cto.com/kf/">程序开发</a> > <a href="https://www.2cto.com/kf/all/">综合编程</a> > <a href="https://www.2cto.com/kf/all/qita/">其他综合</a> >  正文</dd>
+			
+			</dl>
+		<dl class="box_t"><dd>python jieba分词(结巴分词)、提取词，加载词，修改词频，定义词库</dd></dl>
+																										<dl class="box_INFO clearfix">
+			<dd class="frinfo">2017-08-05 10:02:57 &nbsp;&nbsp;&nbsp;&nbsp;
+				<i class="comm"></i><a class="num" href="#SOHUCS" id="changyan_count_unit"></a><a href="#SOHUCS">个评论</a>
+				<script type="text/javascript" src="//assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+&nbsp;&nbsp;  来源：<a href="http://blog.csdn.net/hhtnan" target="_blank" rel="nofollow">IT届的小学生</a>&nbsp;&nbsp;  </dd>
+			<dd class="frsize">
+				<a href="javascript:;" onclick="add_favorite('python jieba分词(结巴分词)、提取词，加载词，修改词频，定义词库');" class="t6">收藏</a>&nbsp;&nbsp;
+				<a target="_blank" href="/index.php?m=member&c=content&a=publish&modid=1&siteid=1"><i class="publish"></i>我要投稿</a>
+			</dd>
+		</dl>
+        <!-- 2cto_左一 -->
+         <div class="cont_ibox">
+         	<script type="text/javascript">cto_A_D("2cto_9");</script>
+         </div>
+		<div class="box_body" id="fontzoom">
+       <div id="Article">
+        <p>&ldquo;结巴&rdquo;中文分词：做最好的 <a href="https://www.2cto.com/kf/web/Python/" target="_blank" class="keylink">Python</a> 中文分词<a href="https://www.2cto.com/kf/all/zujian/" target="_blank" class="keylink">组件</a>,分词模块jieba，它是python比较好用的分词模块, 支持中文简体，繁体分词，还支持自定义词库。<br />
+jieba的分词，提取关键词，自定义词语。</p>
+<h1 id="1jiebacut分词三种模式">1、jieba.cut分词三种模式</h1>
+jieba.cut 方法接受三个输入参数: 需要分词的字符串；cut_all 参数用来控制是否采用全模式；HMM 参数用来控制是否使用<br />
+HMM 模型<br />
+jieba.cut_for_search 方法接受两个参数：需要分词的字符串；是否使用 HMM 模型。该方法适合用于搜索引擎构建倒排索引的分词，粒度比较细<br />
+待分词的字符串可以是 unicode 或 UTF-8 字符串、GBK 字符串。注意：不建议直接输入 GBK 字符串，可能无法预料地错误解码成 UTF-8<br />
+jieba.cut 以及 jieba.cut_for_search 返回的结构都是一个可迭代的 generator，可以使用 for 循环来获得分词后得到的每一个词语(unicode)，或者用<br />
+jieba.lcut 以及 jieba.lcut_for_search 直接返回 list<br />
+jieba.Tokenizer(dictionary=DEFAULT_DICT) 新建自定义分词器，可用于同时使用不同词典。jieba.dt 为默认分词器，所有全局分词相关函数都是该分词器的映射。
+<pre class="brush:java;">
+#coding=utf-8
+import jieba,math
+import jieba.analyse
+&#39;&#39;&#39;
+jieba.cut主要有三种模式
+#随便对一个动物园的评论进行分析
+str_text=&quot;真是好久好久没来哈皮娜拉野生动物园了，记忆里还是小时候三四年级学校组织春游去的银河系&quot;
+#全模式cut_all=True
+str_quan1=jieba.cut(str_text,cut_all=True)
+print(&#39;全模式分词：{ %d}&#39; % len(list(str_quan1)))
+str_quan2=jieba.cut(str_text,cut_all=True)
+print(&quot;/&quot;.join(str_quan2))
+# print(str(str_1))   #为一个generator 用for循环可以得到分词的结果
+# str_1_len=len(list(str_1))  #为什么？这里执行后后面.join 就不执行，求告知
+
+#精准模式cut_all=False，默认即是
+str_jing1=jieba.cut(str_text,cut_all=False)
+print(&#39;精准模式分词：{ %d}&#39; % len(list(str_jing1)))
+str_jing2=jieba.cut(str_text,cut_all=False)
+print(&quot;/&quot;.join(str_jing2))
+
+#搜索引擎模式  cut_for_search
+str_soso1=jieba.cut_for_search(str_text)
+print(&#39;搜索引擎分词：{ %d}&#39; % len(list(str_soso1)))
+str_soso2=jieba.cut_for_search(str_text)
+print(&quot;/&quot;.join(str_soso))</pre>
+<p><strong>结果</strong><br />
+<strong>全模式分词：</strong>{ 32}<br />
+Prefix dict has been built succesfully.<br />
+真是/TMD/好久/好久好久/好久/好久没/没来/哈/皮/娜拉/野生/野生动物/生动/动物/动物园/了///记忆/记忆里/还是/小时/小时候/时候/学校/组织/春游/游去/的/银河/银河系/河系<br />
+<strong>精准模式分词：</strong>{ 19}<br />
+真是/TMD/好久好久/没来/哈皮/娜拉/野生/动物园/了/，/记忆里/还是/小时候/学校/组织/春游/去/的/银河系<br />
+<strong>搜索引擎分词：</strong>{ 27}<br />
+真是/TMD/好久/好久/好久好久/没来/哈皮/娜拉/野生/动物/动物园/了/，/记忆/记忆里/还是/小时/时候/小时候/学校/组织/春游/去/的/银河/河系/银河系、</p>
+<h1 id="2关键词提取关键词提取">2关键词提取、关键词提取**</h1>
+<pre class="brush:java;">
+import jieba.analyse
+&rsquo;analyse.extract.tags&lsquo;
+&#39;&#39;&#39;
+keywords1=jieba.analyse.extract_tags(str_text)
+print(&#39;关键词提取&#39;+&quot;/&quot;.join(keywords1))
+keywords_top=jieba.analyse.extract_tags(str_text,topK=3)
+print(&#39;关键词topk&#39;+&quot;/&quot;.join(keywords_to#有时不确定提取多少关键词，可利用总词的百分比
+print(&#39;总词数{}&#39;.format(len(list(jieba.cut(str_text)))))
+total=len(list(jieba.cut(str_text)))
+get_cnt=math.ceil(total*0.1)  #向上取整
+print(&#39;从%d 中取出%d 个词&#39;% (total,get_cnt))
+keywords_top1=jieba.analyse.extract_tags(str_text,topK=get_cnt)
+print(&#39;关键词topk&#39;+&quot;/&quot;.join(keywords_top1))&#39;&#39;</pre>
+<p><strong>结果：</strong><br />
+**关键词提取**TMD/哈皮/春游/好久好久/记忆里/娜拉/银河系/没来/动物园/小时候/野生/学校/真是/组织/还是<br />
+**关键词topk**TMD/哈皮/春游<br />
+总词数19<br />
+从19 中取出2 个词topkTMD/哈皮、</p>
+<h2 id="加自定义词与加载自定义词库">加自定义词与加载自定义词库**</h2>
+<pre class="brush:java;">
+================# 处理时，jieba.add_word
+# add_word(word,freq=None,tag=None)  和del_word可在程序中动态修改词典
+# suggest_freq(segment,tune=Ture)可调节单词词频，时期能或不能显示
+# 注：自动计算的词频在使用HMM新词发现功能时可能无效
+# &#39;&#39;&#39;
+# str_jing2=jieba.cut(str_text,cut_all=False)
+# print(&#39;add_word前:&#39;+&quot;/&quot;.join(str_jing2))
+# #添加自定义词
+# jieba.add_word(&#39;哈皮娜拉&#39;)
+# str_jing3=jieba.cut(str_text,cut_all=False)
+# print(&#39;add_word后:&#39;+&quot;/&quot;.join(str_jing3))
+# #修正词频
+# jieba.suggest_freq(&#39;野生动物园&#39;,tune=True)
+# str_jing4=jieba.cut(str_text,cut_all=False)
+# print(&#39;suggest_freq后:&#39;+&quot;/&quot;.join(str_jing4))
+#</pre>
+<p><strong>结果：</strong><br />
+<strong>add_word前:</strong>真是/TMD/好久好久/没来/哈皮/娜拉/野生/动物园/了/，/记忆里/还是/小时候/学校/组织/春游/去/的/银河系<br />
+add_word后:真是/TMD/好久好久/没/来/哈皮娜拉/野生/动物园/了/，/记忆里/还是/小时候/学校/组织/春游/去/的/银河系<br />
+<strong>suggest_freq后</strong>:真是/TMD/好久好久/没/来/哈皮娜拉/野生动物园/了/，/记忆里/还是/小时候/学校/组织/春游/去/的/银河系</p>
+<h1 id="加载自定义词库">加载自定义词库</h1>
+<pre class="brush:java;">
+jieba.load_userdict(filename)#filename为文件路径
+词典格式和dict.txt一样，一词一行，每行分三个部分（用空格隔开），词语 词频（可省） 词性（可省）
+顺序不可颠倒，若filename为路径或二进制方式打开，则需为UTF-8
+&#39;&#39;&#39;
+#定义：三四年级  在文件内
+jieba.load_userdict(&#39;C:\\Users\\lenovo\\Desktop\\自定义词库.txt&#39;)
+str_load=jieba.cut(str_text,cut_all=False)
+print(&#39;load_userdict后:&#39;+&quot;/&quot;.join(str_load))
+&#39;&#39;&#39;
+注jieba.load_userdict加载自定义词库和jieba初始化词库一同使用，
+但是，默认的初始词库放在安装目录ixia，如果确定长期加载词库，就替换他
+使用词库的切换功能set_dictionary()
+可将jieba默认词库copy到自己的目录下，在添加，或者找到更全的词库
+&#39;&#39;&#39;
+#一般在python都为site-packages\jieba\dict.txt
+#模拟演示
+jieba.set_dictionary(&#39;filename&#39;)
+#之后进行分词，如果我们切换了词库，此时程序就会初始化
+我们制定的词库，而不加载默认路径词库</pre>
+<p><strong>以下内容来源于网络收集</strong><br />
+3. 关键词提取<br />
+基于 TF-IDF 算法的关键词抽取</p>
+<p>import jieba.analyse</p>
+<pre class="brush:java;">
+<code>jieba.analyse.extract_tags(sentence, topK=20, withWeight=False, allowPOS=())
+    sentence 为待提取的文本
+    topK 为返回几个 TF/IDF 权重最大的关键词，默认值为 20
+    withWeight 为是否一并返回关键词权重值，默认值为 False
+    allowPOS 仅包括指定词性的词，默认值为空，即不筛选
+jieba.analyse.TFIDF(idf_path=None) 新建 TFIDF 实例，idf_path 为 IDF 频率文件
+</code></pre>
+<p><code>代码示例 （关键词提取）</code></p>
+<p><code>https://github.com/fxsjy/jieba/blob/master/test/extract_tags.py</code></p>
+<p><code>关键词提取所使用逆向文件频率（IDF）文本语料库可以切换成自定义语料库的路径</code></p>
+<pre class="brush:java;">
+<code><code>用法： jieba.analyse.set_idf_path(file_name) # file_name为自定义语料库的路径
+自定义语料库示例：https://github.com/fxsjy/jieba/blob/master/extra_dict/idf.txt.big
+用法示例：https://github.com/fxsjy/jieba/blob/master/test/extract_tags_idfpath.py
+</code></code></pre>
+<p><code><code>关键词提取所使用停止词（Stop Words）文本语料库可以切换成自定义语料库的路径</code></code></p>
+<pre class="brush:java;">
+<code><code><code>用法： jieba.analyse.set_stop_words(file_name) # file_name为自定义语料库的路径
+自定义语料库示例：https://github.com/fxsjy/jieba/blob/master/extra_dict/stop_words.txt
+用法示例：https://github.com/fxsjy/jieba/blob/master/test/extract_tags_stop_words.py
+</code></code></code></pre>
+<p><code><code><code>关键词一并返回关键词权重值示例</code></code></code></p>
+<pre class="brush:java;">
+<code><code><code><code>用法示例：https://github.com/fxsjy/jieba/blob/master/test/extract_tags_with_weight.py
+</code></code></code></code></pre>
+<p><code><code><code><code>基于 TextRank 算法的关键词抽取</code></code></code></code></p>
+<pre class="brush:java;">
+<code><code><code><code><code>jieba.analyse.textrank(sentence, topK=20, withWeight=False, allowPOS=(&#39;ns&#39;, &#39;n&#39;, &#39;vn&#39;, &#39;v&#39;)) 直接使用，接口相同，注意默认过滤词性。
+jieba.analyse.TextRank() 新建自定义 TextRank 实例
+</code></code></code></code></code></pre>
+<p><code><code><code><code><code>算法论文： TextRank: Bringing Order into Texts<br />
+基本思想:</code></code></code></code></code></p>
+<pre class="brush:java;">
+<code><code><code><code><code><code>将待抽取关键词的文本进行分词
+以固定窗口大小(默认为5，通过span属性调整)，词之间的共现关系，构建图
+计算图中节点的PageRank，注意是无向带权图
+</code></code></code></code></code></code></pre>
+<p><code><code><code><code><code><code>使用示例:</code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code>见 test/demo.py<br />
+4. 词性标注</code></code></code></code></code></code></p>
+<pre class="brush:java;">
+<code><code><code><code><code><code><code>jieba.posseg.POSTokenizer(tokenizer=None) 新建自定义分词器，tokenizer 参数可指定内部使用的 jieba.Tokenizer 分词器。jieba.posseg.dt 为默认词性标注分词器。
+标注句子分词后每个词的词性，采用和 ictclas 兼容的标记法。
+用法示例
+</code></code></code></code></code></code></code></pre>
+<blockquote>
+	<blockquote>
+		<blockquote>
+			<p><code><code><code><code><code><code><code>import jieba.posseg as pseg<br />
+			words = pseg.cut(&ldquo;我爱北京天安门&rdquo;)<br />
+			for word, flag in words:<br />
+			&hellip; print(&lsquo;%s %s&rsquo; % (word, flag))<br />
+			&hellip;<br />
+			我 r<br />
+			爱 v<br />
+			北京 ns<br />
+			天安门 ns</code></code></code></code></code></code></code></p>
+		</blockquote>
+	</blockquote>
+</blockquote>
+<p><code><code><code><code><code><code><code>并行分词</code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code>原理：将目标文本按行分隔后，把各行文本分配到多个 Python 进程并行分词，然后归并结果，从而获得分词速度的可观提升<br />
+基于 python 自带的 multiprocessing 模块，目前暂不支持 Windows</code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code>用法：<br />
+jieba.enable_parallel(4) # 开启并行分词模式，参数为并行进程数<br />
+jieba.disable_parallel() # 关闭并行分词模式</code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code>例子：https://github.com/fxsjy/jieba/blob/master/test/parallel/test_file.py</code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code>实验结果：在 4 核 3.4GHz <a href="https://www.2cto.com/os/linux/" target="_blank" class="keylink">Linux</a> 机器上，对金庸全集进行精确分词，获得了 1MB/s 的速度，是单进程版的 3.3 倍。</code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code>注意：并行分词仅支持默认分词器 jieba.dt 和 jieba.posseg.dt。</code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code>Tokenize：返回词语在原文的起止位置</code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code>注意，输入参数只接受 unicode<br />
+默认模式</code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code>result = jieba.tokenize(u&rsquo;永和服装饰品有限公司&rsquo;)<br />
+for tk in result:<br />
+print(&ldquo;word %s\t\t start: %d \t\t end:%d&rdquo; % (tk[0],tk[1],tk[2]))</code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code>word 永和 start: 0 end:2<br />
+word 服装 start: 2 end:4<br />
+word 饰品 start: 4 end:6<br />
+word 有限公司 start: 6 end:10</code></code></code></code></code></code></code></p>
+<pre class="brush:java;">
+<code><code><code><code><code><code><code><code>搜索模式
+</code></code></code></code></code></code></code></code></pre>
+<p><code><code><code><code><code><code><code><code>result = jieba.tokenize(u&rsquo;永和服装饰品有限公司&rsquo;, mode=&rsquo;search&rsquo;)<br />
+for tk in result:<br />
+print(&ldquo;word %s\t\t start: %d \t\t end:%d&rdquo; % (tk[0],tk[1],tk[2]))</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>word 永和 start: 0 end:2<br />
+word 服装 start: 2 end:4<br />
+word 饰品 start: 4 end:6<br />
+word 有限 start: 6 end:8<br />
+word 公司 start: 8 end:10<br />
+word 有限公司 start: 6 end:10</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>ChineseAnalyzer for Whoosh 搜索引擎</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>引用： from jieba.analyse import ChineseAnalyzer</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>用法示例：https://github.com/fxsjy/jieba/blob/master/test/test_whoosh.py</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>命令行分词</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>使用示例：python -m jieba news.txt &gt; cut_result.txt</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>命令行选项（翻译）：</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>使用: python -m jieba [options] filename</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>结巴命令行界面。</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>固定参数:<br />
+filename 输入文件</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>可选参数:<br />
+-h, &ndash;help 显示此帮助信息并退出<br />
+-d [DELIM], &ndash;delimiter [DELIM]<br />
+使用 DELIM 分隔词语，而不是用默认的&rsquo; / &lsquo;。<br />
+若不指定 DELIM，则使用一个空格分隔。<br />
+-p [DELIM], &ndash;pos [DELIM]<br />
+启用词性标注；如果指定 DELIM，词语和词性之间<br />
+用它分隔，否则用 _ 分隔<br />
+-D DICT, &ndash;dict DICT 使用 DICT 代替默认词典<br />
+-u USER_DICT, &ndash;user-dict USER_DICT<br />
+使用 USER_DICT 作为附加词典，与默认词典或自定义词典配合使用<br />
+-a, &ndash;cut-all 全模式分词（不支持词性标注）<br />
+-n, &ndash;no-hmm 不使用隐含马尔可夫模型<br />
+-q, &ndash;quiet 不输出载入信息到 STDERR<br />
+-V, &ndash;version 显示版本信息并退出</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>如果没有指定文件名，则使用标准输入。</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>&ndash;help 选项输出：</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>$&gt; python -m jieba &ndash;help<br />
+Jieba command line interface.</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>positional arguments:<br />
+filename input file</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>optional arguments:<br />
+-h, &ndash;help show this help message and exit<br />
+-d [DELIM], &ndash;delimiter [DELIM]<br />
+use DELIM instead of &rsquo; / &rsquo; for word delimiter; or a<br />
+space if it is used without DELIM<br />
+-p [DELIM], &ndash;pos [DELIM]<br />
+enable POS tagging; if DELIM is specified, use DELIM<br />
+instead of &lsquo;_&rsquo; for POS delimiter<br />
+-D DICT, &ndash;dict DICT use DICT as dictionary<br />
+-u USER_DICT, &ndash;user-dict USER_DICT<br />
+use USER_DICT together with the default dictionary or<br />
+DICT (if specified)<br />
+-a, &ndash;cut-all full pattern cutting (ignored with POS tagging)<br />
+-n, &ndash;no-hmm don&rsquo;t use the Hidden Markov Model<br />
+-q, &ndash;quiet don&rsquo;t print loading messages to stderr<br />
+-V, &ndash;version show program&rsquo;s version number and exit</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>If no filename specified, use STDIN instead.</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>延迟加载机制</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>jieba 采用延迟加载，import jieba 和 jieba.Tokenizer() 不会立即触发词典的加载，一旦有必要才开始加载词典构建前缀字典。如果你想手工初始 jieba，也可以手动初始化。</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>import jieba<br />
+jieba.initialize() # 手动初始化（可选）</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>在 0.28 之前的版本是不能指定主词典的路径的，有了延迟加载机制后，你可以改变主词典的路径:</code></code></code></code></code></code></code></code></p>
+<p><code><code><code><code><code><code><code><code>jieba.set_dictionary(&lsquo;data/dict.txt.big&rsquo;)</code></code></code></code></code></code></code></code></p>
+						</div>
+		</div>
+	<div id="pages" class="box_body"></div>
+	<div class="cont_ibox">
+		<!-- 2cto_左二 -->
+		<script type="text/javascript">cto_A_D("2cto_5");</script>
+	</div>
+	<dl class="box_Nsc">
+		<dd class="lcopy"><a class="ckcopy" onclick="copyToClipBoard()">点击复制链接 与好友分享!</a><a class="ckhome" href="/">回本站首页</a></dd>
+		<dd class="Article-Tool">
+  		<!--<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_mshare" data-cmd="mshare" title="分享到一键分享"></a></div>                                -->
+	  </dd>
+	</dl>
+	<div class="more_tags"><span>相关TAG标签</span>
+																		<a href="https://www.2cto.com/tag/python.html"  target="_blank"> python</a>
+								 		         															<a href="https://www.2cto.com/tag/.html"  target="_blank"> </a>
+								 		         															<a href="https://www.2cto.com/tag/jiebafenci.html"  target="_blank"> jieba分词</a>
+								 		         															<a href="https://www.2cto.com/tag/jiebafenci.html"  target="_blank"> 结巴分词</a>
+								 		         															<a href="https://www.2cto.com/tag/tiquci.html"  target="_blank"> 提取词</a>
+								 		         															<a href="https://www.2cto.com/tag/jiazaici.html"  target="_blank"> 加载词</a>
+								 		         															<a href="https://www.2cto.com/tag/xiugaicipin.html"  target="_blank"> 修改词频</a>
+								 		             </div>
+	<dl class="box_NPre">
+		<dd class="TLineX"><strong>上一篇：</strong><a href="https://www.2cto.com/kf/201708/665044.html">MT 102 Multiple Customer Credit Transfer多客户信用转账</a></dd>
+		<dd><strong>下一篇：</strong><a href="https://www.2cto.com/kf/201708/665046.html">开发者实验室体验之文智自然语言处理SDK by python</a></dd>
+	</dl>
+	<div class="inbox">
+	<div class="about">相关文章</div>
+	</div>
+	<ul class="alists clearfix">
+				<li class="alistline"><i class="dot"></i><a href="https://www.2cto.com/kf/201609/549800.html" target="_blank">Notepad++ 搭建g++ python</a></li>
+			<li class="alistline"><i class="dot"></i><a href="https://www.2cto.com/kf/201609/550884.html" target="_blank">机器学习系列(11)_Python中Gradient </a></li>
+			<li class="alistline"><i class="dot"></i><a href="https://www.2cto.com/kf/201609/550886.html" target="_blank">机器学习系列(12)_XGBoost参数调优完全</a></li>
+			<li class="alistline"><i class="dot"></i><a href="https://www.2cto.com/kf/201610/554646.html" target="_blank">python数据库编程</a></li>
+			<li class="alistline"><i class="dot"></i><a href="https://www.2cto.com/kf/201610/555515.html" target="_blank">简单的Python的curses库使用教程</a></li>
+			<li class="alistline"><i class="dot"></i><a href="https://www.2cto.com/kf/201610/557116.html" target="_blank">Anaconda多环境多版本python配置指导</a></li>
+			<li class="alistline"><i class="dot"></i><a href="https://www.2cto.com/kf/201610/557123.html" target="_blank">python_basic2</a></li>
+			<li class="alistline"><i class="dot"></i><a href="https://www.2cto.com/kf/201611/561124.html" target="_blank">【caffe-Windows】微软官方caffe之 P</a></li>
+			<li class="alistline"><i class="dot"></i><a href="https://www.2cto.com/kf/201611/563080.html" target="_blank">python爬虫小项目：爬取百度贴吧图片</a></li>
+			<li class="alistline"><i class="dot"></i><a href="https://www.2cto.com/kf/201611/563105.html" target="_blank">python微信飞机大战</a></li>
+			</ul>
+	<div class="more_tags"><span class="t2">热门专题推荐</span>
+																														<a href="https://www.2cto.com/special/pjc/"  target="_blank"> python</a>
+													<a href="https://www.2cto.com/special/dsjc/"  target="_blank"> div+css</a>
+													<a href="https://www.2cto.com/special/css/"  target="_blank"> css教程</a>
+													<a href="https://www.2cto.com/special/html5/"  target="_blank"> html5</a>
+													<a href="https://www.2cto.com/special/html/"  target="_blank"> html教程</a>
+													<a href="https://www.2cto.com/special/jquery_ajax/"  target="_blank"> jquery</a>
+													<a href="https://www.2cto.com/special/Android_AndroidSDK/"  target="_blank"> Android SDK</a>
+													<a href="https://www.2cto.com/special/phphuanjingdajian/"  target="_blank"> php</a>
+													<a href="https://www.2cto.com/special/mysql/"  target="_blank"> mysql</a>
+													<a href="https://www.2cto.com/special/oracle/"  target="_blank"> oracle</a>
+										 				 				 	
+    </div>
+    <div class="inbox">
+	<div class="cont_ibox">
+		<!-- 2cto_左三 -->
+		<script type="text/javascript">cto_A_D("2cto_13");</script>
+	</div>
+	</div>
+	<div class="inbox">
+		<div class="about">图文推荐</div>
+	</div>
+    <div class="cont_ibox">
+	<!-- 2cto_左四 -->
+	<script type="text/javascript">cto_A_D("2cto_4");</script>
+	</div>
+	<ul class="picbox clearfix">
+						<li>
+			<a target="_blank" class="imgbox" href="https://www.2cto.com/kf/201808/776144.html"><img src="http://www.2cto.com/uploadfile/Collfiles/20180828/20180828143519764.png" /></a>
+			<a class="npictext" target="_blank" href="https://www.2cto.com/kf/201808/776144.html">七层网络结构解析</a>
+		</li>
+				<li>
+			<a target="_blank" class="imgbox" href="https://www.2cto.com/kf/201808/774991.html"><img src="http://www.2cto.com/uploadfile/Collfiles/20180823/20180823170243638.png" /></a>
+			<a class="npictext" target="_blank" href="https://www.2cto.com/kf/201808/774991.html">Java虚拟机详解之JVM</a>
+		</li>
+				<li>
+			<a target="_blank" class="imgbox" href="https://www.2cto.com/kf/201808/774979.html"><img src="http://www.2cto.com/uploadfile/Collfiles/20180823/20180823165832117.png" /></a>
+			<a class="npictext" target="_blank" href="https://www.2cto.com/kf/201808/774979.html">常用 Git 命令清单</a>
+		</li>
+				<li>
+			<a target="_blank" class="imgbox" href="https://www.2cto.com/kf/201808/774978.html"><img src="http://www.2cto.com/uploadfile/Collfiles/20180823/20180823165849153.jpg" /></a>
+			<a class="npictext" target="_blank" href="https://www.2cto.com/kf/201808/774978.html">营销费用持续走高，药</a>
+		</li>
+					</ul>
+	<div id="SOHUCS"></div>
+	</div>
+	<div class="box_right">
+		<div class="side-ibox h250">
+        <!-- 2cto_右一 -->
+        <script type="text/javascript">cto_A_D("2cto_6");</script>
+		</div>
+		<div class="box_right_box mt8">
+			<dl class="bTitle tabtitle borT" id="ltabTitle"><dd class="on">文章</dd><dd>推荐</dd></dl>
+                <div class="paddingbox tab_wrap" id="listTab">
+				<div class="tab_main">
+				<dl class="index tab_item">
+															<dd class="list">·&nbsp;<a target="_blank"  href="https://www.2cto.com/kf/201304/205609.html">Java WebService入门实例 </a></dd>
+										<dd class="list">·&nbsp;<a target="_blank"  href="https://www.2cto.com/kf/201403/282979.html">struts2入门教程一（环境搭建，基本案</a></dd>
+										<dd class="list">·&nbsp;<a target="_blank"  href="https://www.2cto.com/kf/201311/260815.html">java中long类型转换为int类型</a></dd>
+										<dd class="list">·&nbsp;<a target="_blank"  href="https://www.2cto.com/kf/201404/292436.html">Nhibernate 一对一关系映射(主键映射)</a></dd>
+										<dd class="list">·&nbsp;<a target="_blank"  href="https://www.2cto.com/kf/201404/292433.html">java学习笔记（十九）&mdash;&mdash;Java 日志记</a></dd>
+										<dd class="list">·&nbsp;<a target="_blank"  href="https://www.2cto.com/kf/201404/292430.html">一致性哈希算法介绍，及java实现</a></dd>
+										<dd class="list">·&nbsp;<a target="_blank"  href="https://www.2cto.com/kf/201404/292129.html">java中一个值得注意的问题---类成员初</a></dd>
+										<dd class="list">·&nbsp;<a target="_blank"  href="https://www.2cto.com/kf/201404/292125.html">编程之美  正方形</a></dd>
+														</dl>
+				<dl class="index tab_item">
+					 										<dd class="list">·&nbsp;<a target="_blank" href="https://www.2cto.com/special/win7jh/">win7激活工具</a></dd>
+										<dd class="list">·&nbsp;<a target="_blank" href="https://www.2cto.com/os/201607/522176.html">win10激活工具</a></dd>
+										<dd class="list">·&nbsp;<a target="_blank" href="https://www.2cto.com/special/win7jihuogongju/">win7激活工具旗舰版</a></dd>
+										<dd class="list">·&nbsp;<a target="_blank" href="https://www.2cto.com/os/201602/489186.html">office2010激活密钥</a></dd>
+										<dd class="list">·&nbsp;<a target="_blank" href="https://www.2cto.com/os/201601/456235.html">windows7激活密钥</a></dd>
+										<dd class="list">·&nbsp;<a target="_blank" href="https://www.2cto.com/os/201601/488006.html">office2010激活工具</a></dd>
+										<dd class="list">·&nbsp;<a target="_blank" href="https://www.2cto.com/os/201601/456247.html">小马激活工具</a></dd>
+										<dd class="list">·&nbsp;<a target="_blank" href="https://www.2cto.com/os/201607/524552.html">win10激活工具</a></dd>
+														</dl>
+				</div>
+			</div>
+		</div>
+		
+		<div class="side-ibox mt8">
+		<!-- 2cto_右二 -->
+		<script type="text/javascript">cto_A_D("2cto_7");</script>
+		</div>
+		
+		<div class="box_right_box mt8">
+			<dl class="bTitle tabtitle borT"><dd class="on">点击排行</dd></dl>
+			<div class="paddingbox">
+				<dl class="index">
+					<dd class="picline"></dd>
+																			</dl>
+			</div>
+		</div>
+		<div class="side-ibox mt8">
+		<!-- 2cto_右三 -->
+           <script type="text/javascript">cto_A_D("2cto_14");</script>
+		</div>
+		<div class="box_right_box mt8">
+			<div class="paddingbox">
+				<!-- <div id="cyHotnews" role="cylabs" data-use="hotnews"></div>
+				<script type="text/javascript" charset="utf-8" src="//changyan.itc.cn/js/??lib/jquery.js,changyan.labs.js?appid=cyrBEfE7C"></script> -->
+			</div>
+		</div>
+		<div class="side-ibox mt8">
+			<!-- 2cto_右四 -->
+			<script type="text/javascript">cto_A_D("2cto_8");</script>
+        </div>
+	</div><!--box_right  end-->
+</div>
+
+<script language="JavaScript" src="https://www.2cto.com/api.php?op=count&id=665045&modelid=1"></script>
+
+<div class="ibox p8">
+<!-- 2cto_通栏2 -->
+<script type="text/javascript">cto_A_D("2cto_2");</script>
+</div>
+<div class="ibox p8">
+<!-- 2cto_通栏3 -->
+<a target="_blank" href="//vip.2cto.com"><img src="/adv/980-80.gif"  width="980" height="80" class="style2" /></a>
+</div>
+</div>
+<span style="display:none"><script type="text/javascript" src="https://statics.2cto.com/js/baidu_js_push.js"></script></span>
+<div class="foot">
+<p>
+<a href="/about">关于我们</a> |
+<a href="/about/contact.html">联系我们</a> |
+<a href="/about/ads.html">广告服务</a> |
+<a href="/about/touzi.html">投资合作</a> |
+<a href="/about/Copyright.html">版权申明</a> |
+<a href="/about/faq.html">在线帮助</a> |
+<a href="/about/map.html">网站地图</a> |
+<a href="/about/tg.html">作品发布</a> |
+<a target="_blank" href="//vip.2cto.com/"><span class="c-red">Vip技术培训</span></a> |
+<a rel="nofollow" href="//www.2cto.com/member/report.php" >举报中心</a>
+</p>
+<p class="style4">版权所有: <a href="/" >红黑联盟</a>--致力于做实用的IT技术学习网站<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1258398875'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "w.cnzz.com/c.php%3Fid%3D1258398875' type='text/javascript'%3E%3C/script%3E"));</script><script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1260439972'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "w.cnzz.com/c.php%3Fid%3D1260439972' type='text/javascript'%3E%3C/script%3E"));</script> 
+</p>
+<div class="hidden"><script type="text/javascript" src="https://statics.2cto.com/js/tj.js"></script>
+<script type="text/javascript">usertongji("邱帆")</script>
+</div>
+<!-- 2cto_图加 -->
+<script type="text/javascript">cto_A_D("2cto_10");</script>
+<!-- 2cto_视窗 -->
+<script type="text/javascript">cto_A_D("2cto_11");</script>
+<!-- 2cto_对联 -->
+<script type="text/javascript">cto_A_D("2cto_12");</script>
+</div><script type="text/javascript" src="https://statics.2cto.com/js/jquery.min.js"></script>
+<script type="text/javascript" src="https://statics.2cto.com/js/swiper.min.js"></script>
+<script type="text/javascript" src="https://statics.2cto.com/js/init_swiper.js"></script>
+<script type="text/javascript" src="https://statics.2cto.com/js/jquery.sgallery.js"></script>
+<script charset="UTF-8" src="https://statics.2cto.com/js/zeroclipboard/jquery.zclip.min.js"></script>
+<script language="javascript" type="text/javascript" src="https://statics.2cto.com/js/dialog.js"></script>
+<script language="javascript" type="text/javascript" src="https://statics.2cto.com/js/syntaxhighlighter.js"></script>
+<script type="text/javascript">SyntaxHighlighter.all();</script>
+<script type="text/javascript" src="https://statics.2cto.com/js/login.js"></script>
+<script type="text/javascript">
+ajaxlogin(encodeURIComponent(location.href),1,3);
+
+function showLogin(){
+	window.art.dialog({id:'Login',iframe:'//www.2cto.com/index.php?m=member&c=index&a=login&tupe=mini', title:'快捷登陆', width:'450', height:'310', lock:true}, function(){var d = window.art.dialog({id:'Login'}).data.iframe;var form = d.document.getElementById('dosubmit');form.click();return false;}, function(){window.art.dialog({id:'Login'}).close()});void(0);
+}
+function add_favorite(title) {
+		$.getJSON('https://www.2cto.com/api.php?op=add_favorite&title='+encodeURIComponent(title)+'&url='+encodeURIComponent(location.href)+'&'+Math.random()+'&callback=?', function(data){
+			if(data.status==1)	{
+				$("#favorite").html('收藏成功');
+			} else {
+				alert('请登陆');
+				window.location.href='//home.2cto.com/?forward='+encodeURIComponent(location.href);
+			}
+		});
+	}
+</script>
+<script type="text/javascript">
+	$(function(){
+	  $('#Article img').LoadImage(true, 630, 560,'http://statics.2cto.com/images/s_nopic.gif');    
+	})
+</script>
+<script> 
+	function copyToClipBoard(){ 
+		var clipBoardContent=document.title + '\r\n' + document.location; 
+		clipBoardContent+='\r\n';	//内容
+
+		var copyurl = clipBoardContent;
+		$(".ckcopy").zclip({
+			path: "https://statics.2cto.com/js/zeroclipboard/ZeroClipboard.swf",
+			copy: copyurl,
+			afterCopy: function() {
+				alert('链接复制成功');
+			},
+			clickAfter: false
+		});
+	} 
+	$(function (){
+		$(".ckcopy").click();
+	});
+</script>
+<script>
+  (function(){
+    var appid = 'cyrBEfE7C',
+    conf = 'prod_830794cf494da8b808afb2994cfe0fee';
+    var doc = document,
+    s = doc.createElement('script'),
+    h = doc.getElementsByTagName('head')[0] || doc.head || doc.documentElement;
+    s.type = 'text/javascript';
+    s.charset = 'utf-8';
+    s.src =  '//assets.changyan.sohu.com/upload/changyan.js?conf='+ conf +'&appid=' + appid;
+    h.insertBefore(s,h.firstChild);
+    window.SCS_NO_IFRAME = true;
+  })()
+</script>
+<script>
+<!--window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];-->
+</script>
+</body>
+</html>

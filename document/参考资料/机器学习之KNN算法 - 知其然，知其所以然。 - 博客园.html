@@ -1,0 +1,727 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="origin" />
+<title>机器学习之KNN算法 - 知其然，知其所以然。 - 博客园</title>
+<meta property="og:description" content="1 KNN算法 1.1 KNN算法简介 KNN（K-Nearest Neighbor）工作原理：存在一个样本数据集合，也称为训练样本集，并且样本集中每个数据都存在标签，即我们知道样本集中每一数据与所属" />
+<link type="text/css" rel="stylesheet" href="/bundles/blog-common.css?v=giTNza-Of-PEt5UsELhFQAR7G6-bfaSa4oolcq7i9-o1"/>
+<link id="MainCss" type="text/css" rel="stylesheet" href="/skins/coffee/bundle-coffee.css?v=NnZbvdgFaQNhu3t8P4Wsaz98sDQkgRt7Qxq2rzF0ZRU1"/>
+<link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="/skins/coffee/bundle-coffee-mobile.css?v=EhLLUe5NHsx18JODVZscd5ef3A8WbJHKTlTvuKQjsl01"/>
+<link title="RSS" type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/erbaodabao0611/rss"/>
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/erbaodabao0611/rsd.xml"/>
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/erbaodabao0611/wlwmanifest.xml"/>
+<script src="//common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+<script type="text/javascript">var currentBlogApp = 'erbaodabao0611', cb_enable_mathjax=false;var isLogined=false;</script>
+<script src="/bundles/blog-common.js?v=fobKU6DuMF7uNOMKEOEwhhLiN2dvU4IL2UfTDgUZOsY1" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a id="lnkBlogLogo" href="https://www.cnblogs.com/erbaodabao0611/"><img id="blogLogo" src="/Skins/custom/images/logo.gif" alt="返回主页" /></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="https://www.cnblogs.com/erbaodabao0611/">知其然，知其所以然。</a></h1>
+<h2>用简单的话和栗子来学习</h2>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="navigator">
+			
+<ul id="navList">
+	<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">博客园</a></li>
+	<li><a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/erbaodabao0611/">首页</a></li>
+	<li><a id="blog_nav_newpost" class="menu" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a></li>
+	<li><a id="blog_nav_contact" accesskey="9" class="menu" rel="nofollow" href="https://msg.cnblogs.com/send/%E7%9F%A5%E5%85%B6%E7%84%B6%EF%BC%8C%E7%9F%A5%E5%85%B6%E6%89%80%E4%BB%A5%E7%84%B6%E3%80%82">联系</a></li>
+	<li><a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/">管理</a></li>
+	<li><a id="blog_nav_rss" class="menu" href="https://www.cnblogs.com/erbaodabao0611/rss">订阅</a>
+	<a id="blog_nav_rss_image" class="aHeaderXML" href="https://www.cnblogs.com/erbaodabao0611/rss"><img src="//www.cnblogs.com/images/xml.gif" alt="订阅" /></a></li>
+</ul>
+
+
+			<div class="blogStats">
+				
+				<div id="blog_stats">
+<!--done-->
+随笔- 14&nbsp;
+文章- 0&nbsp;
+评论- 3&nbsp;
+</div>
+				
+			</div><!--end: blogStats -->
+		</div><!--end: navigator 博客导航栏 -->
+		
+<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class = "post">
+		<h1 class = "postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="https://www.cnblogs.com/erbaodabao0611/p/7588840.html">机器学习之KNN算法</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body" class="blogpost-body"><p><span style="font-size: 18px">1 KNN算法</span></p>
+<p><span style="font-size: 16px">1.1 KNN算法简介</span></p>
+<p><span style="font-size: 15px">　　KNN（K-Nearest Neighbor）工作原理：存在一个样本数据集合，也称为训练样本集，并且样本集中每个数据都存在标签，即我们知道样本集中每一数据与所属分类对应的关系。输入没有标签的数据后，将新数据中的每个特征与样本集中数据对应的特征进行比较，提取出样本集中特征最相似数据（最近邻）的分类标签。一般来说，我们只选择样本数据集中前k个最相似的数据，这就是k近邻算法中k的出处，通常k是不大于20的整数。最后选择k个最相似数据中出现次数最多的分类作为新数据的分类。</span></p>
+<p><span style="font-size: 15px">　　说明：KNN没有显示的训练过程，它是“懒惰学习”的代表，它在训练阶段只是把数据保存下来，训练时间开销为0，等收到测试样本后进行处理。</span></p>
+<p><span style="font-size: 15px">　　举例：以电影分类作为例子，电影题材可分为爱情片，动作片等，那么爱情片有哪些特征？动作片有哪些特征呢？也就是说给定一部电影，怎么进行分类？这里假定将电影分为爱情片和动作片两类，如果一部电影中接吻镜头很多，打斗镜头较少，显然是属于爱情片，反之为动作片。有人曾根据电影中打斗动作和接吻动作数量进行评估，数据如下：</span></p>
+<div align="center">
+<table style="width: 520px; height: 276px" border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">电影名称</span></p>
+</td>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">打斗镜头</span></p>
+</td>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">接吻镜头</span></p>
+</td>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">电影类别</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">Califoria Man</span></p>
+</td>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">3</span></p>
+</td>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">104</span></p>
+</td>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">爱情片</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">Beautigul Woman</span></p>
+</td>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">1</span></p>
+</td>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">81</span></p>
+</td>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">爱情片</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">Kevin Longblade</span></p>
+</td>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">101</span></p>
+</td>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">10</span></p>
+</td>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">动作片</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">Amped II</span></p>
+</td>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">98</span></p>
+</td>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">2</span></p>
+</td>
+<td valign="top" width="114">
+<p align="center"><span style="font-size: 15px">动作片</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><span style="font-size: 15px">　　给定一部电影数据（18，90）打斗镜头18个，接吻镜头90个，如何知道它是什么类型的呢？KNN是这样做的，首先计算未知电影与样本集中其他电影的距离（这里使用曼哈顿距离），数据如下：</span></p>
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td valign="top" width="284">
+<p align="center"><span style="font-size: 15px">电影名称</span></p>
+</td>
+<td valign="top" width="284">
+<p align="center"><span style="font-size: 15px">与未知分类电影的距离</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" width="284">
+<p align="center"><span style="font-size: 15px">Califoria Man</span></p>
+</td>
+<td valign="top" width="284">
+<p align="center"><span style="font-size: 15px">20.5</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" width="284">
+<p align="center"><span style="font-size: 15px">Beautigul Woman</span></p>
+</td>
+<td valign="top" width="284">
+<p align="center"><span style="font-size: 15px">19.2</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" width="284">
+<p align="center"><span style="font-size: 15px">Kevin Longblade</span></p>
+</td>
+<td valign="top" width="284">
+<p align="center"><span style="font-size: 15px">115.3</span></p>
+</td>
+</tr>
+<tr>
+<td valign="top" width="284">
+<p align="center"><span style="font-size: 15px">Amped II</span></p>
+</td>
+<td valign="top" width="284">
+<p align="center"><span style="font-size: 15px">118.9</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><span style="font-size: 15px">　　现在我们按照距离的递增顺序排序，可以找到k个距离最近的电影，加入k=3,那么来看排序的前3个电影的类别，爱情片，爱情片，动作片，下面来进行投票，这部未知的电影爱情片2票，动作片1票，那么我们就认为这部电影属于爱情片。</span></p>
+<p><span style="font-size: 15px">　</span></p>
+<p><span style="font-size: 16px">1.2 KNN算法优缺点</span></p>
+<p><span style="font-size: 16px">　　优点：精度高，对异常值不敏感、无数据输入假定</span></p>
+<p><span style="font-size: 16px">　　缺点：计算复杂度高、空间复杂度高</span></p>
+<p><span style="font-size: 16px">1.3 KNN算法python代码实现</span></p>
+<p><span style="font-size: 16px">　　实现步骤：</span></p>
+<p><span style="font-size: 16px">　　　　（1）计算距离</span></p>
+<p><span style="font-size: 16px">　　　　（2）选择距离最小的k个点</span></p>
+<p><span style="font-size: 16px">　　　　（3）排序</span></p>
+<p><span style="font-size: 16px">　　Python 3代码：<br></span></p>
+<div class="cnblogs_code"><img id="code_img_closed_8dad4ace-457f-4405-92fd-1643a17e8540" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_8dad4ace-457f-4405-92fd-1643a17e8540" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_8dad4ace-457f-4405-92fd-1643a17e8540" class="cnblogs_code_hide">
+<pre><span style="color: #008080"> 1</span> <span style="color: #0000ff">import</span><span style="color: #000000"> numpy as np
+</span><span style="color: #008080"> 2</span> <span style="color: #0000ff">import</span><span style="color: #000000"> operator
+</span><span style="color: #008080"> 3</span> 
+<span style="color: #008080"> 4</span> <span style="color: #0000ff">def</span><span style="color: #000000"> classify(intX,dataSet,labels,k):
+</span><span style="color: #008080"> 5</span>     <span style="color: #800000">'''</span>
+<span style="color: #008080"> 6</span> <span style="color: #800000">    KNN算法
+</span><span style="color: #008080"> 7</span>     <span style="color: #800000">'''</span>
+<span style="color: #008080"> 8</span>     <span style="color: #008000">#</span><span style="color: #008000">numpy中shape[0]返回数组的行数，shape[1]返回列数</span>
+<span style="color: #008080"> 9</span>     dataSetSize =<span style="color: #000000"> dataSet.shape[0]
+</span><span style="color: #008080">10</span>     <span style="color: #008000">#</span><span style="color: #008000">将intX在横向重复dataSetSize次，纵向重复1次</span>
+<span style="color: #008080">11</span>     <span style="color: #008000">#</span><span style="color: #008000">例如intX=([1,2])---&gt;([[1,2],[1,2],[1,2],[1,2]])便于后面计算</span>
+<span style="color: #008080">12</span>     diffMat = np.tile(intX,(dataSetSize,1))-<span style="color: #000000">dataSet
+</span><span style="color: #008080">13</span>     <span style="color: #008000">#</span><span style="color: #008000">二维特征相减后乘方</span>
+<span style="color: #008080">14</span>     sqdifMax = diffMat**2
+<span style="color: #008080">15</span>     <span style="color: #008000">#</span><span style="color: #008000">计算距离</span>
+<span style="color: #008080">16</span>     seqDistances = sqdifMax.sum(axis=1<span style="color: #000000">)
+</span><span style="color: #008080">17</span>     distances = seqDistances**0.5
+<span style="color: #008080">18</span>     <span style="color: #0000ff">print</span> (<span style="color: #800000">"</span><span style="color: #800000">distances:</span><span style="color: #800000">"</span><span style="color: #000000">,distances)
+</span><span style="color: #008080">19</span>     <span style="color: #008000">#</span><span style="color: #008000">返回distance中元素从小到大排序后的索引</span>
+<span style="color: #008080">20</span>     sortDistance =<span style="color: #000000"> distances.argsort()
+</span><span style="color: #008080">21</span>     <span style="color: #0000ff">print</span> (<span style="color: #800000">"</span><span style="color: #800000">sortDistance:</span><span style="color: #800000">"</span><span style="color: #000000">,sortDistance)
+</span><span style="color: #008080">22</span>     classCount =<span style="color: #000000"> {}
+</span><span style="color: #008080">23</span>     <span style="color: #0000ff">for</span> i <span style="color: #0000ff">in</span><span style="color: #000000"> range(k):
+</span><span style="color: #008080">24</span>         <span style="color: #008000">#</span><span style="color: #008000">取出前k个元素的类别</span>
+<span style="color: #008080">25</span>         voteLabel =<span style="color: #000000"> labels[sortDistance[i]]
+</span><span style="color: #008080">26</span>         <span style="color: #0000ff">print</span> (<span style="color: #800000">"</span><span style="color: #800000">第%d个voteLabel=%s</span><span style="color: #800000">"</span><span style="color: #000000">,i,voteLabel)
+</span><span style="color: #008080">27</span>         classCount[voteLabel] = classCount.get(voteLabel,0)+1
+<span style="color: #008080">28</span>     <span style="color: #008000">#</span><span style="color: #008000">dict.get(key,default=None),字典的get()方法,返回指定键的值,如果值不在字典中返回默认值。</span>
+<span style="color: #008080">29</span>     <span style="color: #008000">#</span><span style="color: #008000">计算类别次数</span>
+<span style="color: #008080">30</span> 
+<span style="color: #008080">31</span>     <span style="color: #008000">#</span><span style="color: #008000">key=operator.itemgetter(1)根据字典的值进行排序</span>
+<span style="color: #008080">32</span>     <span style="color: #008000">#</span><span style="color: #008000">key=operator.itemgetter(0)根据字典的键进行排序</span>
+<span style="color: #008080">33</span>     <span style="color: #008000">#</span><span style="color: #008000">reverse降序排序字典</span>
+<span style="color: #008080">34</span>     sortedClassCount = sorted(classCount.items(),key = operator.itemgetter(1),reverse =<span style="color: #000000"> True)
+</span><span style="color: #008080">35</span>     <span style="color: #008000">#</span><span style="color: #008000">结果sortedClassCount = [('动作片', 2), ('爱情片', 1)]</span>
+<span style="color: #008080">36</span>     <span style="color: #0000ff">print</span> (<span style="color: #800000">"</span><span style="color: #800000">sortedClassCount:</span><span style="color: #800000">"</span><span style="color: #000000">,sortedClassCount)
+</span><span style="color: #008080">37</span>     <span style="color: #0000ff">return</span> sortedClassCount[0][0]</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>&nbsp;</p>
+<p><span style="font-size: 18px">2 KNN算法实例</span></p>
+<p><span style="font-size: 16px">2.1 KNN实现电影分类</span></p>
+<p><span style="font-size: 16px">　　</span></p>
+<div class="cnblogs_code"><img id="code_img_closed_277b8993-b849-445c-ad69-9272c6fd8f21" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_277b8993-b849-445c-ad69-9272c6fd8f21" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_277b8993-b849-445c-ad69-9272c6fd8f21" class="cnblogs_code_hide">
+<pre><span style="color: #008080"> 1</span> <span style="color: #0000ff">import</span><span style="color: #000000"> numpy as np
+</span><span style="color: #008080"> 2</span> <span style="color: #0000ff">import</span><span style="color: #000000"> operator
+</span><span style="color: #008080"> 3</span> 
+<span style="color: #008080"> 4</span> <span style="color: #0000ff">def</span><span style="color: #000000"> createDataset():
+</span><span style="color: #008080"> 5</span>     <span style="color: #008000">#</span><span style="color: #008000">四组二维特征</span>
+<span style="color: #008080"> 6</span>     group = np.array([[5,115],[7,106],[56,11],[66,9<span style="color: #000000">]])
+</span><span style="color: #008080"> 7</span>     <span style="color: #008000">#</span><span style="color: #008000">四组对应标签</span>
+<span style="color: #008080"> 8</span>     labels = (<span style="color: #800000">'</span><span style="color: #800000">动作片</span><span style="color: #800000">'</span>,<span style="color: #800000">'</span><span style="color: #800000">动作片</span><span style="color: #800000">'</span>,<span style="color: #800000">'</span><span style="color: #800000">爱情片</span><span style="color: #800000">'</span>,<span style="color: #800000">'</span><span style="color: #800000">爱情片</span><span style="color: #800000">'</span><span style="color: #000000">)
+</span><span style="color: #008080"> 9</span>     <span style="color: #0000ff">return</span><span style="color: #000000"> group,labels
+</span><span style="color: #008080">10</span> 
+<span style="color: #008080">11</span> <span style="color: #0000ff">def</span><span style="color: #000000"> classify(intX,dataSet,labels,k):
+</span><span style="color: #008080">12</span>     <span style="color: #800000">'''</span>
+<span style="color: #008080">13</span> <span style="color: #800000">    KNN算法
+</span><span style="color: #008080">14</span>     <span style="color: #800000">'''</span>
+<span style="color: #008080">15</span>     <span style="color: #008000">#</span><span style="color: #008000">numpy中shape[0]返回数组的行数，shape[1]返回列数</span>
+<span style="color: #008080">16</span>     dataSetSize =<span style="color: #000000"> dataSet.shape[0]
+</span><span style="color: #008080">17</span>     <span style="color: #008000">#</span><span style="color: #008000">将intX在横向重复dataSetSize次，纵向重复1次</span>
+<span style="color: #008080">18</span>     <span style="color: #008000">#</span><span style="color: #008000">例如intX=([1,2])---&gt;([[1,2],[1,2],[1,2],[1,2]])便于后面计算</span>
+<span style="color: #008080">19</span>     diffMat = np.tile(intX,(dataSetSize,1))-<span style="color: #000000">dataSet
+</span><span style="color: #008080">20</span>     <span style="color: #008000">#</span><span style="color: #008000">二维特征相减后乘方</span>
+<span style="color: #008080">21</span>     sqdifMax = diffMat**2
+<span style="color: #008080">22</span>     <span style="color: #008000">#</span><span style="color: #008000">计算距离</span>
+<span style="color: #008080">23</span>     seqDistances = sqdifMax.sum(axis=1<span style="color: #000000">)
+</span><span style="color: #008080">24</span>     distances = seqDistances**0.5
+<span style="color: #008080">25</span>     <span style="color: #0000ff">print</span> (<span style="color: #800000">"</span><span style="color: #800000">distances:</span><span style="color: #800000">"</span><span style="color: #000000">,distances)
+</span><span style="color: #008080">26</span>     <span style="color: #008000">#</span><span style="color: #008000">返回distance中元素从小到大排序后的索引</span>
+<span style="color: #008080">27</span>     sortDistance =<span style="color: #000000"> distances.argsort()
+</span><span style="color: #008080">28</span>     <span style="color: #0000ff">print</span> (<span style="color: #800000">"</span><span style="color: #800000">sortDistance:</span><span style="color: #800000">"</span><span style="color: #000000">,sortDistance)
+</span><span style="color: #008080">29</span>     classCount =<span style="color: #000000"> {}
+</span><span style="color: #008080">30</span>     <span style="color: #0000ff">for</span> i <span style="color: #0000ff">in</span><span style="color: #000000"> range(k):
+</span><span style="color: #008080">31</span>         <span style="color: #008000">#</span><span style="color: #008000">取出前k个元素的类别</span>
+<span style="color: #008080">32</span>         voteLabel =<span style="color: #000000"> labels[sortDistance[i]]
+</span><span style="color: #008080">33</span>         <span style="color: #0000ff">print</span> (<span style="color: #800000">"</span><span style="color: #800000">第%d个voteLabel=%s</span><span style="color: #800000">"</span><span style="color: #000000">,i,voteLabel)
+</span><span style="color: #008080">34</span>         classCount[voteLabel] = classCount.get(voteLabel,0)+1
+<span style="color: #008080">35</span>     <span style="color: #008000">#</span><span style="color: #008000">dict.get(key,default=None),字典的get()方法,返回指定键的值,如果值不在字典中返回默认值。</span>
+<span style="color: #008080">36</span>     <span style="color: #008000">#</span><span style="color: #008000">计算类别次数</span>
+<span style="color: #008080">37</span> 
+<span style="color: #008080">38</span>     <span style="color: #008000">#</span><span style="color: #008000">key=operator.itemgetter(1)根据字典的值进行排序</span>
+<span style="color: #008080">39</span>     <span style="color: #008000">#</span><span style="color: #008000">key=operator.itemgetter(0)根据字典的键进行排序</span>
+<span style="color: #008080">40</span>     <span style="color: #008000">#</span><span style="color: #008000">reverse降序排序字典</span>
+<span style="color: #008080">41</span>     sortedClassCount = sorted(classCount.items(),key = operator.itemgetter(1),reverse =<span style="color: #000000"> True)
+</span><span style="color: #008080">42</span>     <span style="color: #008000">#</span><span style="color: #008000">结果sortedClassCount = [('动作片', 2), ('爱情片', 1)]</span>
+<span style="color: #008080">43</span>     <span style="color: #0000ff">print</span> (<span style="color: #800000">"</span><span style="color: #800000">sortedClassCount:</span><span style="color: #800000">"</span><span style="color: #000000">,sortedClassCount)
+</span><span style="color: #008080">44</span>     <span style="color: #0000ff">return</span><span style="color: #000000"> sortedClassCount[0][0]
+</span><span style="color: #008080">45</span> 
+<span style="color: #008080">46</span> 
+<span style="color: #008080">47</span> 
+<span style="color: #008080">48</span> <span style="color: #0000ff">if</span> <span style="color: #800080">__name__</span> == <span style="color: #800000">'</span><span style="color: #800000">__main__</span><span style="color: #800000">'</span><span style="color: #000000">:
+</span><span style="color: #008080">49</span>     group,labels =<span style="color: #000000"> createDataset()
+</span><span style="color: #008080">50</span>     test = [20,101<span style="color: #000000">]
+</span><span style="color: #008080">51</span>     test_class = classify(test,group,labels,3<span style="color: #000000">)
+</span><span style="color: #008080">52</span>     <span style="color: #0000ff">print</span> (test_class)</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>&nbsp;</p>
+<p><span style="font-size: 16px">2.2 改进约会网站匹配</span></p>
+<p><span style="font-size: 16px">　　这个例子简单说就是通过KNN找到你喜欢的人，首先数据样本包含三个特征，（a）每年获得的飞行常客里程数（b）玩游戏消耗的时间（c）每周消耗的冰激淋公升数，样本数据放在txt中，如下，前三列为三个特征值，最后一列为标签</span></p>
+<p><span style="font-size: 16px"><img style="display: block; margin-left: auto; margin-right: auto" src="https://images2017.cnblogs.com/blog/1073510/201709/1073510-20170924211842181-1960867278.png" alt="" width="409" height="185"></span></p>
+<p><span style="font-size: 16px"><span style="display: none; width: 0px; height: 0px">下面</span></span></p>
+<p>首先读取数据，获取数据集和标签</p>
+<div class="cnblogs_code"><img id="code_img_closed_700fd0c1-6933-4cd5-98f1-e093fb531da5" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_700fd0c1-6933-4cd5-98f1-e093fb531da5" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_700fd0c1-6933-4cd5-98f1-e093fb531da5" class="cnblogs_code_hide">
+<pre><span style="color: #008080"> 1</span> <span style="color: #0000ff">def</span><span style="color: #000000"> file2matrix(filename):
+</span><span style="color: #008080"> 2</span>     fr =<span style="color: #000000"> open(filename)
+</span><span style="color: #008080"> 3</span>     arraylines =<span style="color: #000000"> fr.readlines()
+</span><span style="color: #008080"> 4</span>     <span style="color: #008000">#</span><span style="color: #008000">获取行数</span>
+<span style="color: #008080"> 5</span>     numberoflines =<span style="color: #000000"> len(arraylines)
+</span><span style="color: #008080"> 6</span>     <span style="color: #008000">#</span><span style="color: #008000">返回numpy的数据矩阵,目前矩阵数据为0</span>
+<span style="color: #008080"> 7</span>     returnMat = np.zeros([numberoflines,3<span style="color: #000000">])
+</span><span style="color: #008080"> 8</span>     <span style="color: #008000">#</span><span style="color: #008000">返回的分类标签</span>
+<span style="color: #008080"> 9</span>     classLabelVector =<span style="color: #000000"> []
+</span><span style="color: #008080">10</span>     <span style="color: #008000">#</span><span style="color: #008000">行的索引</span>
+<span style="color: #008080">11</span>     index =<span style="color: #000000"> 0
+</span><span style="color: #008080">12</span>     <span style="color: #0000ff">for</span> line <span style="color: #0000ff">in</span><span style="color: #000000"> arraylines:
+</span><span style="color: #008080">13</span>         <span style="color: #008000">#</span><span style="color: #008000">str.strip(rm) 删除str头和尾指定的字符 rm为空时，默认删除空白符(包括'\n','\r','\t',' ')</span>
+<span style="color: #008080">14</span>         line =<span style="color: #000000"> line.strip()
+</span><span style="color: #008080">15</span>         <span style="color: #008000">#</span><span style="color: #008000">每行数据是\t划分的，将每行数据按照\t进行切片划分</span>
+<span style="color: #008080">16</span>         listFromLine = line.split(<span style="color: #800000">'</span><span style="color: #800000">\t</span><span style="color: #800000">'</span><span style="color: #000000">)
+</span><span style="color: #008080">17</span>         <span style="color: #008000">#</span><span style="color: #008000">取出前三列数据存放到returnMat</span>
+<span style="color: #008080">18</span>         returnMat[index,:] = listFromLine[0:3<span style="color: #000000">]
+</span><span style="color: #008080">19</span>         <span style="color: #008000">#</span><span style="color: #008000">根据文本中标记的喜欢程度进行分类</span>
+<span style="color: #008080">20</span>         <span style="color: #0000ff">if</span> listFromLine[-1] == <span style="color: #800000">"</span><span style="color: #800000">didntLike</span><span style="color: #800000">"</span><span style="color: #000000">:
+</span><span style="color: #008080">21</span>             classLabelVector.append(1<span style="color: #000000">)
+</span><span style="color: #008080">22</span>         <span style="color: #0000ff">elif</span> listFromLine[-1] == <span style="color: #800000">"</span><span style="color: #800000">smallDoses</span><span style="color: #800000">"</span><span style="color: #000000">:
+</span><span style="color: #008080">23</span>             classLabelVector.append(2<span style="color: #000000">)
+</span><span style="color: #008080">24</span>         <span style="color: #0000ff">else</span><span style="color: #000000">:
+</span><span style="color: #008080">25</span>             classLabelVector.append(3<span style="color: #000000">)
+</span><span style="color: #008080">26</span>         index += 1
+<span style="color: #008080">27</span>     <span style="color: #0000ff">return</span> returnMat,classLabelVector</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>数据和标签我们可以打印一下：</p>
+<p><img style="display: block; margin-left: auto; margin-right: auto" src="https://images2017.cnblogs.com/blog/1073510/201709/1073510-20170924212341884-1922503178.png" alt="" width="506" height="159"></p>
+<p><span style="display: none; width: 0px; height: 0px">下面</span></p>
+<p>下面用Matplotlib作图看一下数据信息：</p>
+<div class="cnblogs_code"><img id="code_img_closed_1cd99de5-b4e6-4490-a7ed-7596e2edd015" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_1cd99de5-b4e6-4490-a7ed-7596e2edd015" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_1cd99de5-b4e6-4490-a7ed-7596e2edd015" class="cnblogs_code_hide">
+<pre><span style="color: #008080"> 1</span> <span style="color: #0000ff">from</span> matplotlib.font_manager <span style="color: #0000ff">import</span><span style="color: #000000"> FontProperties
+</span><span style="color: #008080"> 2</span> <span style="color: #0000ff">import</span><span style="color: #000000"> numpy as np
+</span><span style="color: #008080"> 3</span> <span style="color: #0000ff">import</span><span style="color: #000000"> matplotlib.pyplot as plt
+</span><span style="color: #008080"> 4</span> <span style="color: #0000ff">from</span> prepareData_1 <span style="color: #0000ff">import</span><span style="color: #000000"> file2matrix
+</span><span style="color: #008080"> 5</span> <span style="color: #0000ff">import</span><span style="color: #000000"> matplotlib.lines as mlines
+</span><span style="color: #008080"> 6</span> <span style="color: #008000">#</span><span style="color: #008000"> from matplotlib.font_manage import FontProperties</span>
+<span style="color: #008080"> 7</span> <span style="color: #800000">'''</span>
+<span style="color: #008080"> 8</span> <span style="color: #800000">函数说明：数据可视化
+</span><span style="color: #008080"> 9</span> <span style="color: #800000">Parameters:
+</span><span style="color: #008080">10</span> <span style="color: #800000">    datingDataMat - 特征矩阵
+</span><span style="color: #008080">11</span> <span style="color: #800000">    datingLabels - 分类标签向量
+</span><span style="color: #008080">12</span> <span style="color: #800000">Returns:
+</span><span style="color: #008080">13</span> <span style="color: #800000">    无
+</span><span style="color: #008080">14</span> <span style="color: #800000">'''</span>
+<span style="color: #008080">15</span> <span style="color: #0000ff">def</span><span style="color: #000000"> showDatas(datingDataMat,datingLabels):
+</span><span style="color: #008080">16</span>     <span style="color: #008000">#</span><span style="color: #008000">设置汉子格式</span>
+<span style="color: #008080">17</span>     font = FontProperties(fname=r<span style="color: #800000">"</span><span style="color: #800000">c:\windows\fonts\simsun.ttc</span><span style="color: #800000">"</span>, size=14<span style="color: #000000">)
+</span><span style="color: #008080">18</span>     <span style="color: #008000">#</span><span style="color: #008000">函数返回一个figure图像和一个子图ax的array列表。</span>
+<span style="color: #008080">19</span>     fig,axs = plt.subplots(nrows=2,ncols=2,sharex=False,sharey=False,figsize=(13,8<span style="color: #000000">))
+</span><span style="color: #008080">20</span> 
+<span style="color: #008080">21</span>     numberofLabels =<span style="color: #000000"> len(datingLabels)
+</span><span style="color: #008080">22</span>     LabelColors =<span style="color: #000000"> []
+</span><span style="color: #008080">23</span>     <span style="color: #0000ff">for</span> i <span style="color: #0000ff">in</span><span style="color: #000000"> datingLabels:
+</span><span style="color: #008080">24</span>         <span style="color: #0000ff">if</span> i==1<span style="color: #000000">:
+</span><span style="color: #008080">25</span>             LabelColors.append(<span style="color: #800000">'</span><span style="color: #800000">black</span><span style="color: #800000">'</span><span style="color: #000000">)
+</span><span style="color: #008080">26</span>         <span style="color: #0000ff">if</span> i ==2<span style="color: #000000">:
+</span><span style="color: #008080">27</span>             LabelColors.append(<span style="color: #800000">'</span><span style="color: #800000">orange</span><span style="color: #800000">'</span><span style="color: #000000">)
+</span><span style="color: #008080">28</span>         <span style="color: #0000ff">if</span> i==3<span style="color: #000000">:
+</span><span style="color: #008080">29</span>             LabelColors.append(<span style="color: #800000">"</span><span style="color: #800000">red</span><span style="color: #800000">"</span><span style="color: #000000">)
+</span><span style="color: #008080">30</span>     <span style="color: #008000">#</span><span style="color: #008000">画散点图，以数据矩阵的第一列（飞行常客历程）、第二列（玩游戏）数据话散点图</span>
+<span style="color: #008080">31</span>     <span style="color: #008000">#</span><span style="color: #008000">散点大小为15 透明度为0.5</span>
+<span style="color: #008080">32</span>     axs[0][0].scatter(x=datingDataMat[:,0],y=datingDataMat[:,1],color=<span style="color: #000000">LabelColors,
+</span><span style="color: #008080">33</span>         s=15,alpha=0.5<span style="color: #000000">)
+</span><span style="color: #008080">34</span>     axs0_title_text=axs[0][0].set_title(u<span style="color: #800000">"</span><span style="color: #800000">每年获得的飞行里程数与玩视频游戏消耗时间占比</span><span style="color: #800000">"</span><span style="color: #000000">,
+</span><span style="color: #008080">35</span>         FontProperties=<span style="color: #000000">font)
+</span><span style="color: #008080">36</span>     axs0_xlabel_text=axs[0][0].set_xlabel(<span style="color: #800000">"</span><span style="color: #800000">每年获得的飞行常客里程数</span><span style="color: #800000">"</span>,FontProperties=<span style="color: #000000">font)
+</span><span style="color: #008080">37</span>     axs0_ylabel_text=axs[0][0].set_ylabel(<span style="color: #800000">"</span><span style="color: #800000">玩游戏消耗的时间</span><span style="color: #800000">"</span>,FontProperties=<span style="color: #000000">font)
+</span><span style="color: #008080">38</span>     plt.setp(axs0_title_text,size=9,weight=<span style="color: #800000">'</span><span style="color: #800000">bold</span><span style="color: #800000">'</span>,color=<span style="color: #800000">'</span><span style="color: #800000">red</span><span style="color: #800000">'</span><span style="color: #000000">)
+</span><span style="color: #008080">39</span>     <span style="color: #008000">#</span><span style="color: #008000">画散点图，以数据矩阵的第一列（飞行常客历程）、第三列（冰激淋公斤数）数据话散点图</span>
+<span style="color: #008080">40</span>     <span style="color: #008000">#</span><span style="color: #008000">散点大小为15 透明度为0.5</span>
+<span style="color: #008080">41</span>     axs[0][1].scatter(x=datingDataMat[:,0],y=datingDataMat[:,2],color=<span style="color: #000000">LabelColors,
+</span><span style="color: #008080">42</span>         s=15,alpha=0.5<span style="color: #000000">)
+</span><span style="color: #008080">43</span>     axs0_title_text=axs[0][0].set_title(<span style="color: #800000">"</span><span style="color: #800000">每年获得的飞行里程数与冰激淋公斤数占比</span><span style="color: #800000">"</span><span style="color: #000000">,
+</span><span style="color: #008080">44</span>         FontProperties=<span style="color: #000000">font)
+</span><span style="color: #008080">45</span>     axs0_xlabel_text=axs[0][0].set_xlabel(<span style="color: #800000">"</span><span style="color: #800000">每年获得的飞行常客里程数</span><span style="color: #800000">"</span>,FontProperties=<span style="color: #000000">font)
+</span><span style="color: #008080">46</span>     axs0_ylabel_text=axs[0][0].set_ylabel(<span style="color: #800000">"</span><span style="color: #800000">所吃冰激淋公斤数</span><span style="color: #800000">"</span>,FontProperties=<span style="color: #000000">font)
+</span><span style="color: #008080">47</span>     plt.setp(axs0_title_text,size=9,weight=<span style="color: #800000">'</span><span style="color: #800000">bold</span><span style="color: #800000">'</span>,color=<span style="color: #800000">'</span><span style="color: #800000">red</span><span style="color: #800000">'</span><span style="color: #000000">)
+</span><span style="color: #008080">48</span>     <span style="color: #008000">#</span><span style="color: #008000">画散点图，以数据矩阵的第二列（玩游戏）、第三列（冰激淋公斤数）数据话散点图</span>
+<span style="color: #008080">49</span>     <span style="color: #008000">#</span><span style="color: #008000">散点大小为15 透明度为0.5</span>
+<span style="color: #008080">50</span>     axs[1][0].scatter(x=datingDataMat[:,1],y=datingDataMat[:,2],color=<span style="color: #000000">LabelColors,
+</span><span style="color: #008080">51</span>         s=15,alpha=0.5<span style="color: #000000">)
+</span><span style="color: #008080">52</span>     axs0_title_text=axs[0][0].set_title(<span style="color: #800000">"</span><span style="color: #800000">玩游戏时间与冰激淋公斤数占比</span><span style="color: #800000">"</span><span style="color: #000000">,
+</span><span style="color: #008080">53</span>         FontProperties=<span style="color: #000000">font)
+</span><span style="color: #008080">54</span>     axs0_xlabel_text=axs[0][0].set_xlabel(<span style="color: #800000">"</span><span style="color: #800000">每年获得的飞行常客里程数</span><span style="color: #800000">"</span>,FontProperties=<span style="color: #000000">font)
+</span><span style="color: #008080">55</span>     axs0_ylabel_text=axs[0][0].set_ylabel(<span style="color: #800000">"</span><span style="color: #800000">所吃冰激淋公斤数</span><span style="color: #800000">"</span>,FontProperties=<span style="color: #000000">font)
+</span><span style="color: #008080">56</span>     plt.setp(axs0_title_text,size=9,weight=<span style="color: #800000">'</span><span style="color: #800000">bold</span><span style="color: #800000">'</span>,color=<span style="color: #800000">'</span><span style="color: #800000">red</span><span style="color: #800000">'</span><span style="color: #000000">)
+</span><span style="color: #008080">57</span> 
+<span style="color: #008080">58</span>     <span style="color: #008000">#</span><span style="color: #008000">设置图例</span>
+<span style="color: #008080">59</span>     didntLike = mlines.Line2D([],[],color=<span style="color: #800000">'</span><span style="color: #800000">black</span><span style="color: #800000">'</span>,marker=<span style="color: #800000">'</span><span style="color: #800000">.</span><span style="color: #800000">'</span>,markersize=6,label=<span style="color: #800000">'</span><span style="color: #800000">didntlike</span><span style="color: #800000">'</span><span style="color: #000000">)
+</span><span style="color: #008080">60</span>     smallDose = mlines.Line2D([],[],color=<span style="color: #800000">'</span><span style="color: #800000">orange</span><span style="color: #800000">'</span>,marker=<span style="color: #800000">'</span><span style="color: #800000">.</span><span style="color: #800000">'</span>,markersize=6,label=<span style="color: #800000">'</span><span style="color: #800000">smallDose</span><span style="color: #800000">'</span><span style="color: #000000">)
+</span><span style="color: #008080">61</span>     largeDose = mlines.Line2D([],[],color=<span style="color: #800000">'</span><span style="color: #800000">red</span><span style="color: #800000">'</span>,marker=<span style="color: #800000">'</span><span style="color: #800000">.</span><span style="color: #800000">'</span>,markersize=6,label=<span style="color: #800000">'</span><span style="color: #800000">largeDose</span><span style="color: #800000">'</span><span style="color: #000000">)
+</span><span style="color: #008080">62</span> 
+<span style="color: #008080">63</span>     <span style="color: #008000">#</span><span style="color: #008000">添加图例</span>
+<span style="color: #008080">64</span>     axs[0][0].legend(handles=<span style="color: #000000">[didntLike,smallDose,largeDose])
+</span><span style="color: #008080">65</span>     axs[0][1].legend(handles=<span style="color: #000000">[didntLike,smallDose,largeDose])
+</span><span style="color: #008080">66</span>     axs[1][0].legend(handles=<span style="color: #000000">[didntLike,smallDose,largeDose])
+</span><span style="color: #008080">67</span> 
+<span style="color: #008080">68</span> <span style="color: #000000">    plt.show()
+</span><span style="color: #008080">69</span> 
+<span style="color: #008080">70</span> <span style="color: #0000ff">if</span> <span style="color: #800080">__name__</span> == <span style="color: #800000">'</span><span style="color: #800000">__main__</span><span style="color: #800000">'</span><span style="color: #000000">:
+</span><span style="color: #008080">71</span>     filename = <span style="color: #800000">"</span><span style="color: #800000">datingTestSet.txt</span><span style="color: #800000">"</span>
+<span style="color: #008080">72</span>     returnMat,classLabelVector =<span style="color: #000000"> file2matrix(filename)
+</span><span style="color: #008080">73</span> <span style="color: #000000">    showDatas(returnMat,classLabelVector)
+</span><span style="color: #008080">74</span>             
+<span style="color: #008080">75</span>             </pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>这里我把py文件分开写了，还要注意txt数据的路径，高大上的图：</p>
+<p><img style="float: left" src="https://images2017.cnblogs.com/blog/1073510/201709/1073510-20170924213416181-2101973950.png" alt="" width="651" height="191"></p>
+<p>&nbsp;</p>
+<p><span style="font-size: 16px"><img src="https://images2017.cnblogs.com/blog/1073510/201709/1073510-20170924213515071-1108926735.png" alt="" width="328" height="182"></span></p>
+<p>&nbsp;</p>
+<p>样本数据中的到底喜欢什么样子的人？自己去分析一下吧。下面要对数据进行归一化，归一化的原因就不多说了，</p>
+<div class="cnblogs_code"><img id="code_img_closed_1f58f90d-d2ee-4455-96e5-aa52d026eb6c" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_1f58f90d-d2ee-4455-96e5-aa52d026eb6c" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_1f58f90d-d2ee-4455-96e5-aa52d026eb6c" class="cnblogs_code_hide">
+<pre><span style="color: #008080"> 1</span> <span style="color: #0000ff">from</span> prepareData_1 <span style="color: #0000ff">import</span><span style="color: #000000"> file2matrix
+</span><span style="color: #008080"> 2</span> <span style="color: #0000ff">import</span><span style="color: #000000"> numpy as np
+</span><span style="color: #008080"> 3</span> <span style="color: #800000">'''</span>
+<span style="color: #008080"> 4</span> <span style="color: #800000">函数说明：数据归一化
+</span><span style="color: #008080"> 5</span> <span style="color: #800000">Parameters:
+</span><span style="color: #008080"> 6</span> <span style="color: #800000">    dataSet - 特征矩阵
+</span><span style="color: #008080"> 7</span> <span style="color: #800000">Returns:
+</span><span style="color: #008080"> 8</span> <span style="color: #800000">    normDataSet - 归一化后的特征矩阵
+</span><span style="color: #008080"> 9</span> <span style="color: #800000">    ranges - 数据范围
+</span><span style="color: #008080">10</span> <span style="color: #800000">    minVals - 数据最小值
+</span><span style="color: #008080">11</span> <span style="color: #800000">'''</span>
+<span style="color: #008080">12</span> 
+<span style="color: #008080">13</span> <span style="color: #0000ff">def</span><span style="color: #000000"> autoNorm(dataSet):
+</span><span style="color: #008080">14</span>     <span style="color: #008000">#</span><span style="color: #008000">获得数据的最大最小值</span>
+<span style="color: #008080">15</span>     <span style="color: #0000ff">print</span><span style="color: #000000"> (dataSet)
+</span><span style="color: #008080">16</span>     <span style="color: #0000ff">print</span> (<span style="color: #800000">"</span><span style="color: #800000">**********************</span><span style="color: #800000">"</span><span style="color: #000000">)
+</span><span style="color: #008080">17</span>     minVals =<span style="color: #000000"> dataSet.min(0)
+</span><span style="color: #008080">18</span>     maxVals =<span style="color: #000000"> dataSet.max(0)
+</span><span style="color: #008080">19</span>     <span style="color: #0000ff">print</span> (<span style="color: #800000">"</span><span style="color: #800000">minValues:</span><span style="color: #800000">"</span><span style="color: #000000">,minVals)
+</span><span style="color: #008080">20</span>     <span style="color: #0000ff">print</span> (<span style="color: #800000">"</span><span style="color: #800000">maxValuse:</span><span style="color: #800000">"</span><span style="color: #000000">,maxVals)
+</span><span style="color: #008080">21</span>     <span style="color: #008000">#</span><span style="color: #008000">计算最大最小值的差</span>
+<span style="color: #008080">22</span>     ranges = maxVals -<span style="color: #000000"> minVals
+</span><span style="color: #008080">23</span>     <span style="color: #0000ff">print</span><span style="color: #000000"> ()
+</span><span style="color: #008080">24</span>     <span style="color: #008000">#</span><span style="color: #008000">shape(dataSet)返回dataSet的矩阵行列数</span>
+<span style="color: #008080">25</span>     normDataSet=<span style="color: #000000">np.zeros(np.shape(dataSet))
+</span><span style="color: #008080">26</span>     <span style="color: #008000">#</span><span style="color: #008000">返回dataSet的行数</span>
+<span style="color: #008080">27</span>     m =<span style="color: #000000"> dataSet.shape[0]
+</span><span style="color: #008080">28</span>     <span style="color: #008000">#</span><span style="color: #008000">原始值减去最小值</span>
+<span style="color: #008080">29</span>     normDataSet=dataSet-np.tile(minVals,(m,1<span style="color: #000000">))
+</span><span style="color: #008080">30</span>     <span style="color: #008000">#</span><span style="color: #008000">除以最大值和最小值的差，得到的归一化的数据</span>
+<span style="color: #008080">31</span>     normDataSet = normDataSet/np.tile(ranges,(m,1<span style="color: #000000">))
+</span><span style="color: #008080">32</span>     <span style="color: #0000ff">return</span> normDataSet,ranges,minVals</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>归一化后的数据如下：</p>
+<p><img style="display: block; margin-left: auto; margin-right: auto" src="https://images2017.cnblogs.com/blog/1073510/201709/1073510-20170924213851431-1012924041.png" alt="" width="411" height="73">有了以上步骤，下面就可以构建完整的约会分类，去找你喜欢的人了：</p>
+<div class="cnblogs_code"><img id="code_img_closed_b9893ad3-8634-45d5-a0ce-1b8c60883006" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_b9893ad3-8634-45d5-a0ce-1b8c60883006" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_b9893ad3-8634-45d5-a0ce-1b8c60883006" class="cnblogs_code_hide">
+<pre><span style="color: #008080"> 1</span> <span style="color: #0000ff">from</span> prepareData_1 <span style="color: #0000ff">import</span><span style="color: #000000"> file2matrix
+</span><span style="color: #008080"> 2</span> <span style="color: #0000ff">from</span> dataNormal_3 <span style="color: #0000ff">import</span><span style="color: #000000"> autoNorm
+</span><span style="color: #008080"> 3</span> <span style="color: #0000ff">import</span><span style="color: #000000"> operator
+</span><span style="color: #008080"> 4</span> <span style="color: #0000ff">import</span><span style="color: #000000"> numpy as np
+</span><span style="color: #008080"> 5</span> <span style="color: #800000">'''</span>
+<span style="color: #008080"> 6</span> <span style="color: #800000">函数说明：knn算法，分类器
+</span><span style="color: #008080"> 7</span> <span style="color: #800000">Parameters:
+</span><span style="color: #008080"> 8</span> <span style="color: #800000">    inX - 用于分类的数据（测试集）
+</span><span style="color: #008080"> 9</span> <span style="color: #800000">    dataset - 用于训练的数据（训练集）
+</span><span style="color: #008080">10</span> <span style="color: #800000">    labes - 分类标签
+</span><span style="color: #008080">11</span> <span style="color: #800000">    k - knn算法参数，选择距离最小的k个点
+</span><span style="color: #008080">12</span> <span style="color: #800000">Returns:
+</span><span style="color: #008080">13</span> <span style="color: #800000">    sortedClassCount[0][0] - 分类结果
+</span><span style="color: #008080">14</span> <span style="color: #800000">'''</span>
+<span style="color: #008080">15</span> <span style="color: #0000ff">def</span><span style="color: #000000"> classify0(inX,dataset,labes,k):
+</span><span style="color: #008080">16</span>     dataSetSize = dataset.shape[0]  <span style="color: #008000">#</span><span style="color: #008000">返回行数</span>
+<span style="color: #008080">17</span>     diffMat = np.tile(inX,(dataSetSize,1))-<span style="color: #000000">dataset
+</span><span style="color: #008080">18</span>     sqDiffMat = diffMat**2
+<span style="color: #008080">19</span>     sqDistances = sqDiffMat.sum(axis=1<span style="color: #000000">)
+</span><span style="color: #008080">20</span>     distances = sqDistances**0.5
+<span style="color: #008080">21</span>     sortedDistIndices  =<span style="color: #000000">distances.argsort()
+</span><span style="color: #008080">22</span>     classCount =<span style="color: #000000"> {}
+</span><span style="color: #008080">23</span>     <span style="color: #0000ff">for</span> i <span style="color: #0000ff">in</span><span style="color: #000000"> range(k):
+</span><span style="color: #008080">24</span>         voteLabel =<span style="color: #000000"> labes[sortedDistIndices[i]]
+</span><span style="color: #008080">25</span>         classCount[voteLabel] = classCount.get(voteLabel,0)+1
+<span style="color: #008080">26</span>     sortedClassCount = sorted(classCount.items(),key=operator.itemgetter(1),reverse=<span style="color: #000000">True)
+</span><span style="color: #008080">27</span>     <span style="color: #0000ff">return</span><span style="color: #000000"> sortedClassCount[0][0]
+</span><span style="color: #008080">28</span> <span style="color: #0000ff">def</span><span style="color: #000000"> datingClassTest():
+</span><span style="color: #008080">29</span>     <span style="color: #008000">#</span><span style="color: #008000">filename="test.txt"</span>
+<span style="color: #008080">30</span>     filename = <span style="color: #800000">"</span><span style="color: #800000">datingTestSet.txt</span><span style="color: #800000">"</span>
+<span style="color: #008080">31</span>     datingDataMat,datingLabels =<span style="color: #000000"> file2matrix(filename)
+</span><span style="color: #008080">32</span>     <span style="color: #008000">#</span><span style="color: #008000">取所有数据的10%</span>
+<span style="color: #008080">33</span>     hoRatio = 0.1
+<span style="color: #008080">34</span>     <span style="color: #008000">#</span><span style="color: #008000">数据归一化，返回归一化后的矩阵，数据范围，数据最小值</span>
+<span style="color: #008080">35</span>     normMat,ranges,minVals =<span style="color: #000000"> autoNorm(datingDataMat)
+</span><span style="color: #008080">36</span>     <span style="color: #008000">#</span><span style="color: #008000">获得nornMat的行数</span>
+<span style="color: #008080">37</span>     m =<span style="color: #000000"> normMat.shape[0]
+</span><span style="color: #008080">38</span>     <span style="color: #008000">#</span><span style="color: #008000">百分之十的测试数据的个数</span>
+<span style="color: #008080">39</span>     numTestVecs = int(m*<span style="color: #000000">hoRatio)
+</span><span style="color: #008080">40</span>     <span style="color: #008000">#</span><span style="color: #008000">分类错误计数</span>
+<span style="color: #008080">41</span>     errorCount = 0.0
+<span style="color: #008080">42</span> 
+<span style="color: #008080">43</span>     <span style="color: #0000ff">for</span> i <span style="color: #0000ff">in</span><span style="color: #000000"> range(numTestVecs):
+</span><span style="color: #008080">44</span>         <span style="color: #008000">#</span><span style="color: #008000">前numTestVecs个数据作为测试集，后m-numTestVecs个数据作为训练集</span>
+<span style="color: #008080">45</span>         classifierResult =<span style="color: #000000"> classify0(normMat[i,:],normMat[numTestVecs:m,:],
+</span><span style="color: #008080">46</span>             datingLabels[numTestVecs:m],10<span style="color: #000000">)
+</span><span style="color: #008080">47</span>         <span style="color: #0000ff">print</span> (<span style="color: #800000">"</span><span style="color: #800000">分类结果：%d \t真实类别：%d</span><span style="color: #800000">"</span>%<span style="color: #000000">(classifierResult,datingLabels[i]))
+</span><span style="color: #008080">48</span>         <span style="color: #0000ff">if</span> classifierResult !=<span style="color: #000000"> datingLabels[i]:
+</span><span style="color: #008080">49</span>             errorCount += 1.0
+<span style="color: #008080">50</span>     <span style="color: #0000ff">print</span> (<span style="color: #800000">"</span><span style="color: #800000">错误率：%f</span><span style="color: #800000">"</span>%(errorCount/float(numTestVecs)*100<span style="color: #000000">))
+</span><span style="color: #008080">51</span> 
+<span style="color: #008080">52</span> <span style="color: #0000ff">if</span> <span style="color: #800080">__name__</span> == <span style="color: #800000">'</span><span style="color: #800000">__main__</span><span style="color: #800000">'</span><span style="color: #000000">:
+</span><span style="color: #008080">53</span>     datingClassTest()</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>都是上面的步骤，这里就不解释了，结果如下所示：</p>
+<p><img style="display: block; margin-left: auto; margin-right: auto" src="https://images2017.cnblogs.com/blog/1073510/201709/1073510-20170924214355103-2111835250.png" alt="" width="305" height="161"></p>
+<p><span style="font-size: 16px">2.3 手写数字识别</span></p>
+<p><span style="font-size: 16px">　　数据可以样例可以打开文本文件进行查看，其中txt文件名的第一个数字为本txt中的数字，目录trainingDigits中包含了大约2000个例子，每个数字大约有200个样本，testDigits中包含900个测试数据，我们使用<span style="font-size: 16px">trainingDigits中的</span>数据训练分类器，<span style="font-size: 16px">testDigits中的数据</span>作为测试，两组数据没有重合。<span id="transmark" style="display: none; width: 0px; height: 0px"></span><br></span></p>
+<p><span style="font-size: 16px">数据在这里：https://github.com/Jenny0611/Ml_Learning01</span></p>
+<p><span style="font-size: 16px">首先我们要将图像数据处理为一个向量，将32*32的二进制图像信息转化为1*1024的向量，再使用前面的分类器，代码如下：</span></p>
+<p>&nbsp;</p>
+<div class="cnblogs_code"><img id="code_img_closed_ac6ee394-a637-41d5-8604-80b42734bce1" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_ac6ee394-a637-41d5-8604-80b42734bce1" class="code_img_opened" style="display: none" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_ac6ee394-a637-41d5-8604-80b42734bce1" class="cnblogs_code_hide">
+<pre><span style="color: #008080"> 1</span> <span style="color: #0000ff">import</span><span style="color: #000000"> numpy as np
+</span><span style="color: #008080"> 2</span> <span style="color: #0000ff">import</span><span style="color: #000000"> operator
+</span><span style="color: #008080"> 3</span> <span style="color: #0000ff">from</span> os <span style="color: #0000ff">import</span><span style="color: #000000"> listdir
+</span><span style="color: #008080"> 4</span> <span style="color: #0000ff">from</span> sklearn.neighbors <span style="color: #0000ff">import</span><span style="color: #000000"> KNeighborsClassifier as kNN
+</span><span style="color: #008080"> 5</span> 
+<span style="color: #008080"> 6</span> <span style="color: #800000">'''</span>
+<span style="color: #008080"> 7</span> <span style="color: #800000">函数说明：将32*32的二进制图片转换为1*1024向量
+</span><span style="color: #008080"> 8</span> <span style="color: #800000">Parameters:
+</span><span style="color: #008080"> 9</span> <span style="color: #800000">    filename - 文件名
+</span><span style="color: #008080">10</span> <span style="color: #800000">Returns:
+</span><span style="color: #008080">11</span> <span style="color: #800000">    returnVect - 返回的二进制图像的1*1024向量
+</span><span style="color: #008080">12</span> <span style="color: #800000">'''</span>
+<span style="color: #008080">13</span> <span style="color: #0000ff">def</span><span style="color: #000000"> img2vector(filename):
+</span><span style="color: #008080">14</span>     <span style="color: #008000">#</span><span style="color: #008000">创建1*1024的0向量</span>
+<span style="color: #008080">15</span>     returnVect = np.zeros((1,1024<span style="color: #000000">))
+</span><span style="color: #008080">16</span>     fr =<span style="color: #000000"> open(filename)
+</span><span style="color: #008080">17</span>     <span style="color: #008000">#</span><span style="color: #008000">按行读取</span>
+<span style="color: #008080">18</span>     <span style="color: #0000ff">for</span> i <span style="color: #0000ff">in</span> range(32<span style="color: #000000">):
+</span><span style="color: #008080">19</span>         <span style="color: #008000">#</span><span style="color: #008000">读一行数据</span>
+<span style="color: #008080">20</span>         lineStr=<span style="color: #000000">fr.readline()
+</span><span style="color: #008080">21</span>         <span style="color: #008000">#</span><span style="color: #008000">每一行的前32个数据依次添加到returnVect</span>
+<span style="color: #008080">22</span>         <span style="color: #0000ff">for</span> j <span style="color: #0000ff">in</span> range(32<span style="color: #000000">):
+</span><span style="color: #008080">23</span>             returnVect[0,32*i+j]=<span style="color: #000000">int(lineStr[j])
+</span><span style="color: #008080">24</span>     <span style="color: #0000ff">return</span><span style="color: #000000"> returnVect
+</span><span style="color: #008080">25</span> 
+<span style="color: #008080">26</span> <span style="color: #800000">'''</span>
+<span style="color: #008080">27</span> <span style="color: #800000">函数说明：手写数字分类测试
+</span><span style="color: #008080">28</span> <span style="color: #800000">Parameters:
+</span><span style="color: #008080">29</span> <span style="color: #800000">    filename - 无
+</span><span style="color: #008080">30</span> <span style="color: #800000">Returns:
+</span><span style="color: #008080">31</span> <span style="color: #800000">    returnVect - 无
+</span><span style="color: #008080">32</span> <span style="color: #800000">'''</span>
+<span style="color: #008080">33</span> <span style="color: #0000ff">def</span><span style="color: #000000"> handwritingClassTest():
+</span><span style="color: #008080">34</span>     <span style="color: #008000">#</span><span style="color: #008000">测试集的labels</span>
+<span style="color: #008080">35</span>     hwLabels=<span style="color: #000000">[]
+</span><span style="color: #008080">36</span>     <span style="color: #008000">#</span><span style="color: #008000">返回trainingDigits目录下的文件名</span>
+<span style="color: #008080">37</span>     trainingFileList=listdir(<span style="color: #800000">'</span><span style="color: #800000">trainingDigits</span><span style="color: #800000">'</span><span style="color: #000000">)
+</span><span style="color: #008080">38</span>     <span style="color: #008000">#</span><span style="color: #008000">返回文件夹下文件的个数</span>
+<span style="color: #008080">39</span>     m=<span style="color: #000000">len(trainingFileList)
+</span><span style="color: #008080">40</span>     <span style="color: #008000">#</span><span style="color: #008000">初始化训练的Mat矩阵的测试集</span>
+<span style="color: #008080">41</span>     trainingMat=np.zeros((m,1024<span style="color: #000000">))
+</span><span style="color: #008080">42</span>     <span style="color: #008000">#</span><span style="color: #008000">从文件名中解析出训练集的类别</span>
+<span style="color: #008080">43</span>     <span style="color: #0000ff">for</span> i <span style="color: #0000ff">in</span><span style="color: #000000"> range(m):
+</span><span style="color: #008080">44</span>         fileNameStr=<span style="color: #000000">trainingFileList[i]
+</span><span style="color: #008080">45</span>         classNumber = int(fileNameStr.split(<span style="color: #800000">'</span><span style="color: #800000">_</span><span style="color: #800000">'</span><span style="color: #000000">)[0])
+</span><span style="color: #008080">46</span>         <span style="color: #008000">#</span><span style="color: #008000">将获取的类别添加到hwLabels中</span>
+<span style="color: #008080">47</span> <span style="color: #000000">        hwLabels.append(classNumber)
+</span><span style="color: #008080">48</span>         <span style="color: #008000">#</span><span style="color: #008000">将每一个文件的1*1024数据存储到trainingMat矩阵中</span>
+<span style="color: #008080">49</span>         trainingMat[i,:]=img2vector(<span style="color: #800000">'</span><span style="color: #800000">trainingDigits/%s</span><span style="color: #800000">'</span>%<span style="color: #000000">(fileNameStr))
+</span><span style="color: #008080">50</span>     <span style="color: #008000">#</span><span style="color: #008000">构建KNN分类器</span>
+<span style="color: #008080">51</span>     neigh = kNN(n_neighbors=3,algorithm=<span style="color: #800000">'</span><span style="color: #800000">auto</span><span style="color: #800000">'</span><span style="color: #000000">)
+</span><span style="color: #008080">52</span>     <span style="color: #008000">#</span><span style="color: #008000">拟合模型，trainingMat为测试矩阵,hwLabels为对应的标签</span>
+<span style="color: #008080">53</span> <span style="color: #000000">    neigh.fit(trainingMat,hwLabels)
+</span><span style="color: #008080">54</span>     <span style="color: #008000">#</span><span style="color: #008000">返回testDigits目录下的文件列表</span>
+<span style="color: #008080">55</span>     testFileList=listdir(<span style="color: #800000">'</span><span style="color: #800000">testDigits</span><span style="color: #800000">'</span><span style="color: #000000">)
+</span><span style="color: #008080">56</span>     errorCount=0.0
+<span style="color: #008080">57</span>     mTest=<span style="color: #000000">len(testFileList)
+</span><span style="color: #008080">58</span>     <span style="color: #008000">#</span><span style="color: #008000">从文件中解析出测试集的类别并进行分类测试</span>
+<span style="color: #008080">59</span>     <span style="color: #0000ff">for</span> i <span style="color: #0000ff">in</span><span style="color: #000000"> range(mTest):
+</span><span style="color: #008080">60</span>         fileNameStr=<span style="color: #000000">testFileList[i]
+</span><span style="color: #008080">61</span>         classNumber=int(fileNameStr.split(<span style="color: #800000">'</span><span style="color: #800000">_</span><span style="color: #800000">'</span><span style="color: #000000">)[0])
+</span><span style="color: #008080">62</span>         <span style="color: #008000">#</span><span style="color: #008000">获得测试集的1*1024向量用于训练</span>
+<span style="color: #008080">63</span>         vectorUnderTest=img2vector(<span style="color: #800000">'</span><span style="color: #800000">testDigits/%s</span><span style="color: #800000">'</span>%<span style="color: #000000">(fileNameStr))
+</span><span style="color: #008080">64</span>         <span style="color: #008000">#</span><span style="color: #008000">获得预测结果</span>
+<span style="color: #008080">65</span>         classifierResult=<span style="color: #000000">neigh.predict(vectorUnderTest)
+</span><span style="color: #008080">66</span>         <span style="color: #0000ff">print</span> (<span style="color: #800000">"</span><span style="color: #800000">分类返回结果%d\t真实结果%d</span><span style="color: #800000">"</span>%<span style="color: #000000">(classifierResult,classNumber))
+</span><span style="color: #008080">67</span>         <span style="color: #0000ff">if</span> (classNumber !=<span style="color: #000000"> classifierResult):
+</span><span style="color: #008080">68</span>             errorCount += 1.0
+<span style="color: #008080">69</span>     <span style="color: #0000ff">print</span> (<span style="color: #800000">"</span><span style="color: #800000">总共错了%d个\t错误率为%f%%</span><span style="color: #800000">"</span>%(errorCount,errorCount/mTest*100<span style="color: #000000">))
+</span><span style="color: #008080">70</span> 
+<span style="color: #008080">71</span> <span style="color: #0000ff">if</span> <span style="color: #800080">__name__</span> == <span style="color: #800000">'</span><span style="color: #800000">__main__</span><span style="color: #800000">'</span><span style="color: #000000">:
+</span><span style="color: #008080">72</span>     handwritingClassTest()</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>&nbsp;</p>
+<p><img style="display: block; margin-left: auto; margin-right: auto" src="https://images2017.cnblogs.com/blog/1073510/201709/1073510-20170924215916853-615813512.png" alt="" width="227" height="71"></p>
+<p>2.4 小结</p>
+<p>　　KNN是简单有效的分类数据算法，在使用时必须有训练样本数据，还要计算距离，如果数据量非常大会非常消耗空间和时间。它的另一个缺陷是无法给出任何数据的基础结构信息，因此我们无法平均实例样本和典型实例样本具体特征，而决策树将使用概率测量方法处理分类问题，以后章节会介绍。</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>本文参考：http://blog.csdn.net/c406495762/article/details/75172850</p>
+<p>　　　　　《机器学习实战》</p>
+<p>&nbsp;</p></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory"></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info">
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"></div>
+</div>
+
+
+		</div>
+		<div class = "postDesc">posted @ <span id="post-date">2017-09-24 22:20</span> <a href='https://www.cnblogs.com/erbaodabao0611/'>知其然，知其所以然。</a> 阅读(<span id="post_view_count">...</span>) 评论(<span id="post_comment_count">...</span>)  <a href ="https://i.cnblogs.com/EditPosts.aspx?postid=7588840" rel="nofollow">编辑</a> <a href="#" onclick="AddToWz(7588840);return false;">收藏</a></div>
+	</div>
+	<script type="text/javascript">var allowComments=true,cb_blogId=320642,cb_entryId=7588840,cb_blogApp=currentBlogApp,cb_blogUserGuid='390fc0f7-a5b7-e611-845c-ac853d9f53ac',cb_entryCreatedDate='2017/9/24 22:20:00';loadViewCount(cb_entryId);var cb_postType=1;</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id='comment_form' class='commentform'>
+<a name='commentform'></a>
+<div id='divCommentShow'></div>
+<div id='comment_nav'><span id='span_refresh_tips'></span><a href='javascript:void(0);' onclick='return RefreshCommentList();' id='lnk_RefreshComments' runat='server' clientidmode='Static'>刷新评论</a><a href='#' onclick='return RefreshPage();'>刷新页面</a><a href='#top'>返回顶部</a></div>
+<div id='comment_form_container'></div>
+<div class='ad_text_commentbox' id='ad_text_under_commentbox'></div>
+<div id='ad_t2'></div>
+<div id='opt_under_post'></div>
+<div id='cnblogs_c1' class='c_ad_block'></div>
+<div id='under_post_news'></div>
+<script async='async' src='https://www.googletagservices.com/tag/js/gpt.js'></script>
+<script>
+  var googletag = googletag || {};
+  googletag.cmd = googletag.cmd || [];
+</script>
+
+<script>
+  googletag.cmd.push(function() {
+    googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1539008685004-0').addService(googletag.pubads());
+    googletag.pubads().enableSingleRequest();
+    googletag.enableServices();
+  });
+</script>
+<div id='cnblogs_c2' class='c_ad_block'>
+    <div id='div-gpt-ad-1539008685004-0' style='height:60px; width:468px;'>
+    <script>
+    if (new Date() >= new Date(2018, 9, 13)) {
+        googletag.cmd.push(function() { googletag.display('div-gpt-ad-1539008685004-0'); });
+    }
+    </script>
+    </div>
+</div>
+<div id='under_post_kb'></div>
+<div id='HistoryToday' class='c_ad_block'></div>
+<script type='text/javascript'>
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverAdT2();
+    deliverAdC1();
+    deliverAdC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);   
+</script>
+</div>
+
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle">公告</h3>
+	<div id="blog-news"></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="calendar"><div id="blog-calendar" style="display:none"></div><script type="text/javascript">loadBlogDefaultCalendar();</script></div>
+			
+			<DIV id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</DIV>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright &copy;2018 知其然，知其所以然。
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+</body>
+</html>

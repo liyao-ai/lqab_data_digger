@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="canonical" href="https://blog.csdn.net/zhaoxinfan/article/details/12751405"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="referrer" content="always">
+    <meta name="description" content="目前，对于文章中提取关键词最常用的方法莫过于TF-IDF，但是这样提取出来的关键词并不一定准确。
+ 
+举个最简单的例子来说，在新闻中最前面出现“记者李元芳报道”，分词后的结果是“记者、李元芳、报道”，对于这三个词，“记者”和“报道”的经常出现，idf值一般来说可能会很低，而“李元芳”这个刚出道不久名不见经传的无名小辈可能对google免疫，造成的结果是idf值极高。尽管“李元芳”在文章中仅出现" />
+    <meta name="keywords" content="nlp,信息熵" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+    <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848">
+    <script src="https://csdnimg.cn/release/phoenix/vendor/tingyun/tingyun-rum-blog.js"></script>
+
+    <link href="https://csdnimg.cn/public/favicon.ico" rel="SHORTCUT ICON">
+    <title>利用信息熵提取文章关键词 - 无知的我 - CSDN博客</title>
+
+            <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/detail-7f037a8adb.min.css">
+        <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/themes/skin-yellow/skin-yellow-2eefd34acf.min.css">
+
+    <script type="text/javascript">
+        var username = "jj12345jj198999";
+        var blog_address = "https://blog.csdn.net/zhaoxinfan";
+        var static_host = "https://csdnimg.cn/release/phoenix/";
+        var currentUserName = "";
+        var isShowAds = true;
+        var isOwner = false;
+        var loginUrl = "https://passport.csdn.net/account/login?from=https://blog.csdn.net/zhaoxinfan/article/details/12751405"
+        var blogUrl = "https://blog.csdn.net/";
+        //页面皮肤样式
+        var curSkin = "skin-yellow";
+        // 第四范式所需数据
+        var articleTitles = "利用信息熵提取文章关键词 - 无知的我";
+        var articleID = "12751405";
+
+        var nickName = "Felven";
+    </script>
+    <script type="text/javascript">
+        // Traffic Stats of the entire Web site By baidu
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?6bcd52f51e9b3dce32bec4a3997715ac";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+        // Traffic Stats of the entire Web site By baidu end
+    </script>
+    <script src="https://csdnimg.cn/public/common/libs/jquery/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="https://csdnimg.cn/rabbit/exposure-click/main-1.0.6.js"></script>
+    <!-- 新版上报 -->
+    <script src="//g.csdnimg.cn/track/1.1.1/track.js" type="text/javascript"></script>
+    <!-- 新版上报end -->
+            <link rel="stylesheet" href="https://csdnimg.cn/public/sandalstrap/1.4/css/sandalstrap.min.css">
+    <style>
+        .MathJax, .MathJax_Message, .MathJax_Preview{
+            display: none
+        }
+    </style>
+</head>
+<!-- nodata 第三栏接口无数据时样式不变 -->
+<body class="nodata"> 
+    <link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+    <script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+<script type="text/javascript" src="//static.mediav.com/js/mvf_news_feed.js"></script>
+<script type="text/javascript" src="//g.csdnimg.cn/copyright/1.0.2/copyright.js"></script>
+<div style="display:none;">
+	<img src="" onerror='setTimeout(function(){if(!/(csdn.net|iteye.com|baiducontent.com|googleusercontent.com|360webcache.com|sogoucdn.com|bingj.com|baidu.com)$/.test(window.location.hostname)){window.location.href="\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x63\x73\x64\x6e\x2e\x6e\x65\x74"}},3000);'>
+</div>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/chart-3456820cac.css" />
+
+
+
+<script src="https://dup.baidustatic.com/js/ds.js"></script>
+<div class="container clearfix" id="mainBox">
+		<!-- <div id="breadcrumbs">
+			<span><a href="https://blog.csdn.net/">博客首页</a></span>
+			<i>></i>
+			<span><a href="https://blog.csdn.net/zhaoxinfan">无知的我</a></span>
+			<i>></i>
+			<span>利用信息熵提取文章关键词</span>
+		</div> -->
+		<div class="recommend-right">
+  <ul class="recommend-fixed-box">
+    
+  </ul>
+</div>
+    <main>
+        <div class="blog-content-box">
+	<div class="article-header-box">
+		<div class="article-header">
+			<div class="article-title-box">
+				<span class="article-type type-1 float-left">原</span>				<h1 class="title-article">利用信息熵提取文章关键词</h1>
+			</div>
+			<div class="article-info-box">
+				<div class="article-bar-top">
+																				<span class="time">2013年10月15日 16:24:20</span>
+					<a class="follow-nickName" href="https://me.csdn.net/jj12345jj198999" target="_blank">Felven</a>
+						<span class="read-count">阅读数：7678</span>
+						
+														<span class="tags-box artic-tag-box">
+								<span class="label">标签：</span>
+																<a data-track-click='{"mod":"popu_626","con":"nlp"}' data-track-view='{"mod":"popu_626","con":"nlp"}' class="tag-link" href="http://so.csdn.net/so/search/s.do?q=nlp&t=blog" target="_blank">nlp																<a data-track-click='{"mod":"popu_626","con":"信息熵"}' data-track-view='{"mod":"popu_626","con":"信息熵"}' class="tag-link" href="http://so.csdn.net/so/search/s.do?q=信息熵&t=blog" target="_blank">信息熵																<a data-track-click='{"mod":"popu_626","con":"关键词"}' data-track-view='{"mod":"popu_626","con":"关键词"}' class="tag-link" href="http://so.csdn.net/so/search/s.do?q=关键词&t=blog" target="_blank">关键词																</a>
+							</span>
+																					<div class="tags-box space">
+								<span class="label">个人分类：</span>
+																<a class="tag-link" href="https://blog.csdn.net/jj12345jj198999/article/category/926786"  target="_blank">Felven在职场																</a>
+							</div>
+																								</div>
+				<div class="operating">
+														</div>
+			</div>
+		</div>
+	</div>
+	<article>
+		<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog"  data-mod=popu_307  data-dsm = "post" >
+								<div class="article-copyright">
+					版权声明：本文为博主原创文章，未经博主允许不得转载。					https://blog.csdn.net/jj12345jj198999/article/details/12751405				</div>
+								            <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-85423d2993.css" />
+						<div class="htmledit_views">
+                
+<p><br /></p>
+<p> </p>
+<p>目前，对于文章中提取关键词最常用的方法莫过于TF-IDF<span style="font-family:'宋体';">，但是这样提取出来的关键词并不一定准确。</span></p>
+<p> </p>
+<p>举个最简单的例子来说，在新闻中最前面出现“记者李元芳报道”，分词后的结果是“记者、李元芳、报道”，对于这三个词，“记者”和“报道”的经常出现，<span style="font-family:'Times New Roman';">idf</span><span style="font-family:'宋体';">值一般来说可能会很低，而“李元芳”这个刚出道不久名不见经传的无名小辈可能对</span><span style="font-family:'Times New Roman';">google</span><span style="font-family:'宋体';">免疫，造成的结果是</span><span style="font-family:'Times New Roman';">idf</span><span style="font-family:'宋体';">值极高。尽管“李元芳”在文章中仅出现这一次，但足以奠定它是关键词老大的地位。</span></p>
+<p> </p>
+<p>显然如果把“李元芳”作为文章关键词是错误的，至少也不应该排在前五位。于是有人想到可以用词频的方法来干掉“李元芳”，文中出现一次的统统不考虑，这样的方法在一些情况下有效，但是当文章很短，几乎每个词都仅出现一次的时候就提取不到任何关键词了。另一种方法是干掉<span style="font-family:'Times New Roman';">idf</span><span style="font-family:'宋体';">值很高的，但是值多高才是高这又是一个问题。</span></p>
+<p> </p>
+<p>细细分析来看，之所以出现这样的局面完全是<span style="font-family:'Times New Roman';">idf</span><span style="font-family:'宋体';">在作怪。其实在求解</span><span style="font-family:'Times New Roman';">idf</span><span style="font-family:'宋体';">的时候，需要得到每个词词频，而这又需要语料来统计。显然，语料是越多越好，无奈现实中我们得不到这么多的语料，所以只能从特殊到一般，这虽然有道理，但是不是很准确就难说了。</span></p>
+<p> </p>
+<p>为了彻底解决这个问题，应该要做到不需要使用词频进行关键词提取。于是，聪明人士引入了信息熵的概念，具体可以看这里：</p>
+<p><a href="http://zh.wikipedia.org/wiki/%E7%86%B5_(%E4%BF%A1%E6%81%AF%E8%AE%BA)" rel="nofollow"><span style="color:rgb(0,0,255);">http://zh.wikipedia.org/wiki/%E7%86%B5_(%E4%BF%A1%E6%81%AF%E8%AE%BA)</span></a></p>
+<p> </p>
+<p>前面都是铺垫，下面就说说如何在文章中利用信息熵提取关键词：</p>
+<p> </p>
+<p>首先我们需要明确一点，一个词之所以能称为关键词，原因就在于这个词左右能搭配的词很丰富，于是我们可以定义一个词的信息熵：</p>
+<p> </p>
+<p><span style="color:rgb(0,128,0);"> <img src="https://img-blog.csdn.net/20131015161954359" alt="" /></span></p>
+<p>W<span style="font-family:'宋体';">代表该词，</span><span style="font-family:'Times New Roman';">p</span><span style="font-family:'宋体';">代表该词左右出现的不同词的数目。</span></p>
+<p>比如现在某篇文章中出现了两次 <span style="font-family:'Times New Roman';">A W C</span><span style="font-family:'宋体';">， 一次</span><span style="font-family:'Times New Roman';">B W D</span></p>
+<p>那么<span style="font-family:'Times New Roman';">W</span><span style="font-family:'宋体';">的左侧信息熵为</span><span style="font-family:'Times New Roman';">:</span></p>
+<p> <img src="https://img-blog.csdn.net/20131015162016718" alt="" /></p>
+<p>2/3<span style="font-family:'宋体';">表示词组</span><span style="font-family:'Times New Roman';">A</span><span style="font-family:'宋体';">在</span><span style="font-family:'Times New Roman';">3</span><span style="font-family:'宋体';">次中出现了</span><span style="font-family:'Times New Roman';">2</span><span style="font-family:'宋体';">次，</span><span style="font-family:'Times New Roman';">B</span><span style="font-family:'宋体';">只出现了一次，故为</span><span style="font-family:'Times New Roman';">1/3.</span></p>
+<p>W<span style="font-family:'宋体';">右侧的信息熵也是一样的。如果是</span><span style="font-family:'Times New Roman';">A W C, B W C</span></p>
+<p>那么<span style="font-family:'Times New Roman';">W</span><span style="font-family:'宋体';">右侧就是</span><span style="font-family:'Times New Roman';">0</span><span style="font-family:'宋体';">，因为是 </span><span style="font-family:'Times New Roman';">-1log(1)</span><span style="font-family:'宋体';">。</span></p>
+<p>对所有的词计算左右信息熵，如果某个词的左右信息熵都很大，那这个词就很可能是关键词。</p>
+<p> </p>
+<p>拿文章一开始提到的反例来说，“李元芳”只在开头出现了一次，于是信息熵为<span style="font-family:'Times New Roman';">0</span><span style="font-family:'宋体';">，肯定不会是关键词了。</span></p>
+<p> </p>
+<p>最后考虑一种特殊情况，如果某个词左侧的信息熵很大，右侧信息熵很小，而他右侧的词左侧信息熵很小，右侧信息熵很大。形象描述为 <span style="font-family:'Times New Roman';">X B C Y</span><span style="font-family:'宋体';">，</span><span style="font-family:'Times New Roman';">B</span><span style="font-family:'宋体';">与</span><span style="font-family:'Times New Roman';">C</span><span style="font-family:'宋体';">经常一同出现，但是</span><span style="font-family:'Times New Roman';">X</span><span style="font-family:'宋体';">和</span><span style="font-family:'Times New Roman';">Y</span><span style="font-family:'宋体';">经常变化，于是可以把</span><span style="font-family:'Times New Roman';">B</span><span style="font-family:'宋体';">和</span><span style="font-family:'Times New Roman';">C</span><span style="font-family:'宋体';">组合起来当成一个关键词，我们常常见到“智能手机”作为一个关键词出现就是这个道理。这也涉及到</span><span style="font-family:'Times New Roman';">NLP</span><span style="font-family:'宋体';">中另一个很有意思的研究方向</span><span style="font-family:'Times New Roman';">-</span><span style="font-family:'宋体';">新词发现。</span></p>
+<p><span style="font-family:'宋体';"><br /></span></p>
+<p><span style="font-family:'宋体';"><br /></span></p>
+<p><span style="font-family:'宋体';">最后感谢晓阳童鞋解释</span></p>
+            </div>
+                </div>
+									<div class="hide-article-box text-center">
+						<a class="btn" id="btn-readmore" data-track-view='{"mod":"popu_376","con":",https://blog.csdn.net/zhaoxinfan/article/details/12751405,"}' data-track-click='{"mod":"popu_376","con":",https://blog.csdn.net/zhaoxinfan/article/details/12751405,"}'>阅读更多</a>
+					</div>
+					<script>
+						(function(){
+							function setArticleH(btnReadmore,posi){
+								var winH = $(window).height();
+								var articleBox = $("div.article_content");
+								var artH = articleBox.height();
+								if(artH > winH*posi){
+									articleBox.css({
+										'height':winH*posi+'px',
+										'overflow':'hidden'
+									})
+									btnReadmore.click(function(){
+										articleBox.removeAttr("style");
+										$(this).parent().remove();
+									})
+								}else{
+									btnReadmore.parent().remove();
+								}
+							}
+							var btnReadmore = $("#btn-readmore");
+							if(btnReadmore.length>0){
+								if(currentUserName){
+									setArticleH(btnReadmore,3);
+								}else{
+									setArticleH(btnReadmore,1.2);
+								}
+							}
+						})()
+					</script>
+					</article>
+	
+</div>
+<script>
+		$(".MathJax").remove();
+		if($('div.markdown_views pre.prettyprint code.hljs').length > 0 ){
+				$('div.markdown_views')[0].className = 'markdown_views';
+		}
+</script>
+        <div class="p4course_target" ></div><script>window.p4sdk_enable_courseBox=true</script>        <a id="commentBox"></a>
+<div class="comment-box">
+	  	<div class="unlogin-box text-center">
+		想对作者说点什么？
+		<!-- $curl 当前地址 -->
+		<button id="btnCommentUnlogin" class="btn btn-sm btn-red">我来说一句</button>
+	</div>
+			<div class="comment-list-container">
+		<a id="comments"></a>
+		<div class="comment-list-box">
+		</div>
+		<div id="commentPage" class="pagination-box d-none"></div>
+		<div class="opt-box text-center">
+			<button class="btn btn-sm btn-link-blue" id="btnMoreComment"></button>
+		</div>
+	</div>
+</div>
+        <div class="recommend-box">
+            		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/chuchus/article/details/78246648,BlogCommendFromBaidu_0"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/chuchus/article/details/78246648,BlogCommendFromBaidu_0"}'>
+		<a href="https://blog.csdn.net/chuchus/article/details/78246648" target="_blank" title="互信息和左右信息熵 用于 NLP 中的短语识别与提取">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						互信息和左右<em>信息熵</em> 用于 NLP 中的短语识别与<em>提取</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/0/5/F/3_chuchus.jpg" alt="chuchus" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">chuchus</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-16</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							568</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							标准词典分词的粒度通常太小, 相比之下短语就有更丰富的含义. 
+如 算法/工程师vs算法工程师, 智能/手表vs智能手表.互信息和左右信息熵参考
+基于互信息和左右信息熵的短语提取识别...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/gdp5211314/article/details/40301025,BlogCommendFromBaidu_1"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/gdp5211314/article/details/40301025,BlogCommendFromBaidu_1"}'>
+		<a href="https://blog.csdn.net/gdp5211314/article/details/40301025" target="_blank" title="基于互信息和左右信息熵的短语提取识别">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						基于互信息和左右<em>信息熵</em>的短语<em>提取</em>识别				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/B/5/A/3_gdp5211314.jpg" alt="gdp5211314" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">gdp5211314</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-20</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							2255</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							原文链接：
+
+在中文语言处理领域，一项重要的任务就是提取中文短语，也即固定多字词表达串的识别。短语提取经常用于搜索引擎的自动推荐，新词识别等领域。本文主要实现了从陌生文本中自动发现固定短语，并给出...					</p>
+			</div>
+					</a>
+	</div>
+									<div class="recommend-item-box recommend-ad-box clearfix">
+					<script type="text/javascript" src="//rabc1.iteye.com/production/source/pc3553.js?pkcgstj=jm"></script>
+				</div>
+			
+					<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/zxh19800626/article/details/50190803,BlogCommendFromBaidu_2"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/zxh19800626/article/details/50190803,BlogCommendFromBaidu_2"}'>
+		<a href="https://blog.csdn.net/zxh19800626/article/details/50190803" target="_blank" title="基于信息熵的无字典分词算法">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						基于<em>信息熵</em>的无字典分词算法				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/9/4/C/3_zxh19800626.jpg" alt="zxh19800626" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">zxh19800626</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-05</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							650</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							这几天在研究如何用统计方法来发现新词，扩充自己的词典。看到了几篇很有想法的文章，作者阐述了一下思路。文章里面的数据，我计算了一下，发现文有很多数据不够严谨，最主要的问题，并没有给出很详细的理论方面的说...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/perfectmanman/article/details/47606873,BlogCommendFromBaidu_3"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/perfectmanman/article/details/47606873,BlogCommendFromBaidu_3"}'>
+		<a href="https://blog.csdn.net/perfectmanman/article/details/47606873" target="_blank" title="nltk对中文进行处理和分析">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						nltk对中文进行处理和分析				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/1/7/A/3_perfectmanman.jpg" alt="perfectmanman" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">perfectmanman</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">08-13</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							1593</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							如何用 Python 中的 NLTK 对中文进行分析和处理？最近正在用nltk 对中文网络商品评论进行褒贬情感分类，计算评论的信息熵（entropy）、互信息（point mutual informa...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/u010473077/article/details/81293597,BlogCommendFromBaidu_4"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u010473077/article/details/81293597,BlogCommendFromBaidu_4"}'>
+		<a href="https://blog.csdn.net/u010473077/article/details/81293597" target="_blank" title="NLTK学习笔记(一):语言处理和Python">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						NLTK学习笔记(一):语言处理和Python				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/D/C/7/3_u010473077.jpg" alt="u010473077" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">u010473077</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">07-30</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							37</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							1. 列表内容
+
+nltk资料下载** 
+import nltk 
+nltk.download() 
+其中,download() 参数默认是all,可以在脚本里面加上nltk.download(需要的...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/lihaitao000/article/details/51783745,BlogCommendESEnWordWeight_5"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/lihaitao000/article/details/51783745,BlogCommendESEnWordWeight_5"}'>
+		<a href="https://blog.csdn.net/lihaitao000/article/details/51783745" target="_blank" title="计算文章中每个词的权重值-信息熵及代码实现">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						计算<em>文章</em>中每个词的权重值-<em>信息熵</em>及代码实现				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/6/C/9/3_lihaitao000.jpg" alt="lihaitao000" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">lihaitao000</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-29</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							3687</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							计算出每个词的信息熵可以用来作为词的权重，信息熵公式是：
+
+
+W代表该词，p代表该词左右出现的不同词的数目。
+比如现在某篇文章中出现了两次 A W C， 一次B W D
+那么W的左侧信息熵为:
+
+
+2...					</p>
+			</div>
+					</a>
+	</div>
+								<div class="recommend-item-box recommend-ad-box" id="a_d_feed_0"></div>
+			<script>
+				var width = $("div.recommend-box").outerWidth() - 48;
+				NEWS_FEED({
+					w: width,
+					h: 60,
+					showid: 'Afihld',
+					placeholderId: 'a_d_feed_0',
+					inject: 'define',
+					define: {
+						imagePosition: 'left',
+						imageBorderRadius: 0,
+						imageWidth: 90,
+						imageHeight: 60,
+						imageFill: 'clip',
+						displayImage: true,
+						displayTitle: true,
+						titleFontSize: 20,
+						titleFontColor: '#333',
+						titleFontFamily: 'Microsoft Yahei',
+						titleFontWeight: 'bold',
+						titlePaddingTop: 0,
+						titlePaddingRight: 0,
+						titlePaddingBottom: 10,
+						titlePaddingLeft: 8,
+						displayDesc: true,
+						descFontSize: 14,
+						descPaddingLeft: 14,
+						descFontColor: '#6b6b6b',
+						descFontFamily: 'Microsoft Yahei',
+						paddingTop: 0,
+						paddingRight: 0,
+						paddingBottom: 0,
+						paddingLeft: 0,
+						backgroundColor: '#fff',
+						hoverColor: '#ca0c16'
+					}
+				})
+			</script>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/dong_lxkm/article/details/80575102,BlogCommendESEnWordWeight_6"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/dong_lxkm/article/details/80575102,BlogCommendESEnWordWeight_6"}'>
+		<a href="https://blog.csdn.net/dong_lxkm/article/details/80575102" target="_blank" title="基于熵的特征提取">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						基于熵的特征<em>提取</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/A/3/3/3_dong_lxkm.jpg" alt="dong_lxkm" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">dong_lxkm</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-02</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							262</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							
+                            
+                
+                    基于熵的特征提取 
+一、引言 
+最近一直在研究自然语言处理、文本分...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/helihongzhizhuo/article/details/46414849,BlogCommendESEnWordWeight_7"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/helihongzhizhuo/article/details/46414849,BlogCommendESEnWordWeight_7"}'>
+		<a href="https://blog.csdn.net/helihongzhizhuo/article/details/46414849" target="_blank" title="TF-IDF自动提取关键词">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						TF-IDF自动<em>提取</em><em>关键词</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/7/6/3/3_helihongzhizhuo.jpg" alt="helihongzhizhuo" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">helihongzhizhuo</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-08</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							1836</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							这个标题看上去好像很复杂，其实我要谈的是一个很简单的问题。
+
+有一篇很长的文章，我要用计算机提取它的关键词（Automatic Keyphrase extraction），完全不加以人工干预，请问...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/zengxiaosen/article/details/52834457,BlogCommendFromBaidu_8"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/zengxiaosen/article/details/52834457,BlogCommendFromBaidu_8"}'>
+		<a href="https://blog.csdn.net/zengxiaosen/article/details/52834457" target="_blank" title="关键词抽取小结">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						<em>关键词</em>抽取小结				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/A/4/D/3_zengxiaosen.jpg" alt="zengxiaosen" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">zengxiaosen</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-17</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							1619</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							关键词提取就是从文本里面把跟这篇文章意义最相关的一些词抽取出来。这个可以追溯到文献检索初期，当时还不支持全文搜索的时候，关键词就可以作为搜索这篇论文的词语。因此，目前依然可以在论文中看到关键词这一项。...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/albertyzy/article/details/80534246,BlogCommendFromBaidu_9"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/albertyzy/article/details/80534246,BlogCommendFromBaidu_9"}'>
+		<a href="https://blog.csdn.net/albertyzy/article/details/80534246" target="_blank" title="文本关键词提取小结">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						文本<em>关键词</em><em>提取</em>小结				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/1/3/B/3_albertyzy.jpg" alt="albertyzy" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">albertyzy</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-01</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							657</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							网上看到一篇文章总结了几个关键词抽取的算法（如何做好文本关键词提取？从达观数据应用的三种算法说起），想到这是一个很重要的课题还是有必要小结一下的，有不足之处大家可以讨论讨论还有几个比较好的链接供大家参...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box type_hot_word">
+						<div class="content clearfix oneline">
+				<h5 class="float-left">文章热词</h5>
+				<div class="word float-left">
+													<span>
+						<a href="https://www.csdn.net/gather_26/MtTacg4sNjg4Ni1ibG9n.html " target="_blank">
+						nlp汉语自然语言					</a></span>
+																	<span>
+						<a href="https://www.csdn.net/gather_2b/MtTacg4sNzEzOS1ibG9n.html " target="_blank">
+						nlp中奇异值分解					</a></span>
+																	<span>
+						<a href="https://www.csdn.net/gather_2f/MtTacg4sNzI5NS1ibG9n.html " target="_blank">
+						nlp中的实体识别					</a></span>
+																	<span>
+						<a href="https://www.csdn.net/gather_2f/MtTacg4sNzQzMi1ibG9n.html " target="_blank">
+						nlp 中gru					</a></span>
+																	<span>
+						<a href="https://www.csdn.net/gather_29/MtTacg4sNzYxNS1ibG9n.html " target="_blank">
+						nlp数据集复旦					</a></span>
+																																																				</div>
+			</div>
+									<div class="content clearfix oneline">
+				<h5 class="float-left">相关热词</h5>
+				<div class="float-left">
+									<span>
+						<a href="https://blog.csdn.net/sunjing_/article/details/51820213" target="_blank">
+						smb利用</a>
+					</span>
+									<span>
+						<a href="https://blog.csdn.net/guomutian911/article/details/55803826" target="_blank">
+						ipad1利用</a>
+					</span>
+									<span>
+						<a href="https://blog.csdn.net/mickeymouse1928/article/details/69668410" target="_blank">
+						beef利用</a>
+					</span>
+									<span>
+						<a href="https://blog.csdn.net/m0_37170593/article/details/76445972" target="_blank">
+						dll利用</a>
+					</span>
+									<span>
+						<a href="https://blog.csdn.net/clearlovexue/article/details/79716166" target="_blank">
+						利用jar</a>
+					</span>
+								</div>
+			</div>
+					</div>
+		<div class="recommend-item-box blog-expert-recommend-box">
+			<h4 class="text-truncate">博主推荐
+			</h4>
+			<div class="blog-expert-recommend">
+				<div class="blog-expert-load-new" data-index="3">
+					<svg version="1.1" viewBox="0 0 200 200" style="enable-background:new 0 0 200 200;" xml:space="preserve">
+					<path d="M142.5,57.5c-1.3-1.2-2.1-3.3-2.1-5.4c0-4.2,3.3-7.5,7.5-7.5h19.6c4.2,0,7.5,3.3,7.5,7.5s-3.3,7.5-7.5,7.5h-4.2
+					 C170.8,71.2,175,85,175,100c0,41.7-33.8,75-75,75c-4.2,0-7.5-3.3-7.5-7.5c0-4.2,3.3-7.5,7.5-7.5c33.3,0,60-27.1,60-60
+					 C160,83.7,153.8,68.7,142.5,57.5L142.5,57.5z M57.5,142.5c1.2,1.2,2.1,3.3,2.1,5.4c0,4.2-3.3,7.5-7.5,7.5H32.5
+					 c-4.2,0-7.5-3.3-7.5-7.5c0-4.2,3.3-7.5,7.5-7.5h4.2C29.2,128.8,25,115,25,100c0-41.7,33.7-75,75-75c4.2,0,7.5,3.3,7.5,7.5
+					 S104.2,40,100,40c-33.3,0-60,27.1-60,60C40,116.2,46.2,131.2,57.5,142.5z"/>
+					</svg>
+					<span>换一批</span>
+				</div>
+				<div class="blog-expert">
+				</div>
+			</div>
+		</div>
+
+
+            <div class="recommend-loading-box">
+                <img src='https://csdnimg.cn/release/phoenix/images/feedLoading.gif'>
+            </div>
+            <div class="recommend-end-box">
+                <p class="text-center">没有更多推荐了，<a href="https://blog.csdn.net/" class="c-blue c-blue-hover c-blue-focus">返回首页</a></p>
+            </div>
+        </div>
+    </main>
+
+    <aside>
+		    <div id="asideProfile" class="aside-box">
+    <!-- <h3 class="aside-title">个人资料</h3> -->
+    <div class="profile-intro d-flex">
+        <div class="avatar-box d-flex justify-content-center flex-column">
+            <a href="https://blog.csdn.net/jj12345jj198999">
+                <img src="https://avatar.csdn.net/A/0/5/3_jj12345jj198999.jpg" class="avatar_pic">
+            </a>
+        </div>
+        <div class="user-info d-flex justify-content-center flex-column">
+            <p class="name csdn-tracking-statistics tracking-click" data-mod="popu_379">
+                <a href="https://blog.csdn.net/jj12345jj198999" target="_blank" class="" id="uid">Felven</a>
+            </p>
+                    </div>
+                <div class="opt-box d-flex justify-content-center flex-column">
+            <span  class="csdn-tracking-statistics tracking-click" data-mod="popu_379">
+                <a class="btn btn-sm btn-red-hollow" id="btnAttent">关注</a>
+            </span>
+                    </div>
+            </div>
+    <div class="data-info d-flex item-tiling">
+                <dl class="text-center" title="1578">
+                        <dt><a href="https://blog.csdn.net/zhaoxinfan?t=1">原创</a></dt>
+            <dd><a href="https://blog.csdn.net/zhaoxinfan?t=1"><span class="count">1578</span></a></dd>
+                    </dl>
+        <dl class="text-center" id="fanBox" title="1153">
+            <dt>粉丝</dt>
+            <dd><span class="count" id="fan">1153</span></dd>
+        </dl>
+        <dl class="text-center" title="247">
+            <dt>喜欢</dt>
+            <dd><span class="count">247</span></dd>
+        </dl>
+        <dl class="text-center" title="1020">
+            <dt>评论</dt>
+            <dd><span class="count">1020</span></dd>
+        </dl>
+    </div>
+    <div class="grade-box clearfix">
+        <dl>
+            <dt>等级：</dt>
+            <dd>
+                <a href="https://blog.csdn.net/home/help.html#level" title="8级,点击查看等级说明" target="_blank">
+                    <svg class="icon icon-level" aria-hidden="true">
+                        <use xlink:href="#csdnc-bloglevel-8"></use>
+                    </svg>
+                </a>
+            </dd>
+        </dl>
+        <dl>
+            <dt>访问：</dt>
+            <dd title="2348674">
+                234万+            </dd>
+        </dl>
+        <dl>
+            <dt>积分：</dt>
+            <dd title="40298">
+                4万+            </dd>
+        </dl>
+        <dl title="119">
+            <dt>排名：</dt>
+            <dd>119</dd>
+        </dl>
+    </div>
+        <div class="badge-box d-flex">
+        <span>勋章：</span>
+                        <a class="icon-badge" title="持之以恒">
+            <svg class="icon" aria-hidden="true">
+                <use xlink:href="#csdnc-m-lasting"></use>
+            </svg>
+            <div class="icon-arrow"></div>
+            <div class="grade-detail-box item2">
+                <div class="pos-box">
+                    <div class="left-box d-flex justify-content-center align-items-center flex-column">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#csdnc-m-lasting"></use>
+                        </svg>
+                        <p>持之以恒</p>
+                    </div>
+                    <div class="right-box d-flex justify-content-center align-items-center">
+                        授予每个自然月内发布4篇或4篇以上原创或翻译IT博文的用户。不积跬步无以至千里，不积小流无以成江海，程序人生的精彩需要坚持不懈地积累！
+                    </div>
+                </div>
+            </div>
+        </a>
+                            </div>
+    </div>
+		    <div class="csdn-tracking-statistics mb8 box-shadow" data-pid="blog" data-mod="popu_4" style="height:250px;">
+    <div class="aside-content text-center" id="cpro_u2734133">
+      <!-- 广告位：PC-博客内页-百度联盟-300x250 --><script type="text/javascript" src="//rabc1.iteye.com/common/production/web/z3n86.js?lg=yyovfyh"></script>    </div>
+</div>
+		    <!--自定义模块-->
+<div id="asideCustom994711" class="aside-box custom-box">
+    <h3 class="aside-title">漫漫长征路</h3>
+    <div class="aside-content clearfix">
+        
+<ul>
+<li><a href="https://www.coursera.org/landing/hub.php" target="_blank">斯坦福公开课 </a>
+</li><li><a href="http://codeforces.com/problemset?order=BY_SOLVED_DESC" target="_blank">CodeForces
+</a></li><li><a href="http://book.douban.com/doulist/1259081/" target="_blank">豆瓣读书--程序员经典书籍
+</a></li><li><a href="http://mindhacks.cn/" target="_blank">推荐订阅-刘未鹏 </a></li><li><a href="http://coolshell.cn/" target="_blank">推荐订阅-酷壳 </a></li><li><a href="http://freemind.pluskid.org/" target="_blank">推荐订阅-张弛原 </a></li><li><a href="http://bbs.byr.cn/#!board/Job" target="_blank">北邮就业版</a></li><li><a href="http://xjh.haitou.cc/" target="_blank">宣讲会 </a></li></ul>
+    </div>
+</div>
+		    		    <div id="asideCategory" class="aside-box flexible-box">
+    <h3 class="aside-title">个人分类</h3>
+    <div class="aside-content">
+        <ul>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/jj12345jj198999/article/category/829862">
+                    <span class="title oneline">程序人生</span>
+                    <span class="count float-right">74篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/jj12345jj198999/article/category/843088">
+                    <span class="title oneline">AC路漫漫</span>
+                    <span class="count float-right">1184篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/jj12345jj198999/article/category/786956">
+                    <span class="title oneline">他山之玉</span>
+                    <span class="count float-right">118篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/jj12345jj198999/article/category/786957">
+                    <span class="title oneline">破晓印记</span>
+                    <span class="count float-right">46篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/jj12345jj198999/article/category/872342">
+                    <span class="title oneline">Reading notes</span>
+                    <span class="count float-right">98篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/jj12345jj198999/article/category/926786">
+                    <span class="title oneline">Felven在职场</span>
+                    <span class="count float-right">120篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/jj12345jj198999/article/category/1159719">
+                    <span class="title oneline">Windows phone</span>
+                    <span class="count float-right">15篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/jj12345jj198999/article/category/1596613">
+                    <span class="title oneline">Machine learning</span>
+                    <span class="count float-right">27篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/jj12345jj198999/article/category/1597259">
+                    <span class="title oneline">Algorithm</span>
+                    <span class="count float-right">50篇</span>
+                </a>
+            </li>
+                    </ul>
+    </div>
+        <p class="text-center">
+        <a class="btn btn-link-blue flexible-btn" data-fbox="aside-archive">展开</a>
+    </p>
+    </div>
+		    <div id="asideNewComments" class="aside-box">
+    <h3 class="aside-title">最新评论</h3>
+    <div class="aside-content">
+        <ul class="newcomment-list">
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/jj12345jj198999/article/details/17007725#comments">B. Sereja and Suf...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/u25th_engineer" class="user-name" target="_blank">u25th_engineer</a>：每次有不会的题一必应结果都是dalao你的博客，大神666！                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/jj12345jj198999/article/details/9031615#comments">B. Ilya and Queri...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/u25th_engineer" class="user-name" target="_blank">u25th_engineer</a>：大神，这句话的作用是啥？
+[code=csharp]
+  a[i]+=a[i-1];
+[/code]                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/jj12345jj198999/article/details/39637155#comments">B. Fedor and New ...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/u25th_engineer" class="user-name" target="_blank">u25th_engineer</a>：大佬，能不能給说一说这个循环？
+[code=csharp]
+    while(xxor)
+   ...                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/jj12345jj198999/article/details/48474505#comments">A. Multiplication...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/u25th_engineer" class="user-name" target="_blank">u25th_engineer</a>：dalao，能否解释一下这几句话？
+[code=csharp]
+ if(b%i==0)
+     ...                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/jj12345jj198999/article/details/41541723#comments">C. Given Length a...</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/u25th_engineer" class="user-name" target="_blank">u25th_engineer</a>：请问一下这句话的作用是什么？
+[code=csharp]
+ int m1 = 9 * n - m,...                </p>
+            </li>
+                    </ul>
+    </div>
+</div>
+		<div id="asideFooter">
+			
+		<div class="aside-box">
+						<script type="text/javascript" src="//rabc1.iteye.com/common/site/resource/nqnl.js?mhzzpw=gzj"></script>
+					</div>
+				<div class="aside-box">
+			<div class="persion_article">
+			</div>
+		</div>
+	</div>
+</aside>
+<script src="https://csdnimg.cn/pubfooter/js/publib_footer-1.0.3.js" data-isfootertrack="false" type="text/javascript"></script>
+<script>
+	$("a.flexible-btn").click(function(){
+		$(this).parents('div.aside-box').removeClass('flexible-box');
+		$(this).remove();
+	})
+</script>
+</div>
+<div class="mask-dark"></div>
+<div class="pulllog-box" style="display: block;">
+	<div class="pulllog clearfix">
+		<span class="text float-left">
+            <div id="dmp_ad_69"><div id="kp_box_75" data-track-view='{"mod":"kp_popu_75","con":",,"}'><div style="float:left;margin-right:5px;border:1px solid #f13d3d;padding:2px 5px 0px 5px;">
+<a href="https://www.csdn.net/2018dev/?utm_source=blogtextlink" target="_blank" style="color:#f13d3d;font-weight:bold;text-decoration:none;">开发者调查</a>
+</div>
+
+<div style="float:left;margin-right:5px;border:1px solid #000;padding:2px 5px 0px 5px;background:#000;">
+<a href="http://ai2018.csdn.net/?utm_source=bkxxl" target="_blank" style="color:#fff;font-weight:bold;text-decoration:none;">AI开发者大会日程曝光</a>
+</div>
+
+<div style="float:left;margin-right:5px;border:1px solid #f13d3d;padding:2px 5px 0px 5px;">
+<a href="https://gitchat.csdn.net/?utm_source=wzl" target="_blank" style="color:#f13d3d;font-weight:bold;text-decoration:none;">告别知识焦虑，即刻启程</a>
+</div>
+
+<div style="float:left;">
+<script type="text/javascript" src="//rabc1.iteye.com/common/js/ndr3h.js?b=wosyvccl"></script>
+</div></div><script>$(function(){csdn.track.viewCheck($("#kp_box_75"));});</script></div>            		</span>
+		<div class="pulllog-btn float-right clearfix">
+            <div class="float-left csdn-tracking-statistics tracking-click" data-mod="popu_557">
+                <a class="pulllog-login">登录</a>
+            </div>
+            <div class="pulllog-sigin float-left csdn-tracking-statistics tracking-click" data-mod="popu_558">
+                <a href="https://passport.csdn.net/account/mobileregister" target="_blank">注册</a>
+            </div>
+            <button class="btn-close">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#csdnc-times"></use>
+                </svg>
+            </button>
+		</div>
+	</div>
+</div>
+<div id="loginWrap" style="display:none"></div>
+<div class="tool-box">
+	<ul class="meau-list">
+		<li class="btn-like-box ">
+			<button class=" low-height hover-box btn-like " title="点赞">
+				<svg class="icon active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-thumbsup-ok"></use>
+				</svg>
+				<svg class="icon no-active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-thumbsup"></use>
+				</svg>
+				<span class="hover-show text-box text">
+					<span class="no-active">点赞</span>
+					<span class="active">取消点赞</span>
+				</span>
+				<p>0</p>
+			</button>
+		</li>
+		<li class="">
+						<a class="btn-comments long-height hover-box" title="写评论" href="#commentBox">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-comments"></use>
+				</svg>
+				<span class="hover-show text">评论</span>
+				<p class="">
+						5				</p>
+			</a>
+		</li>
+		<li class="toc-container-box" id="liTocBox">
+			<button class="btn-toc low-height hover-box" title="目录">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-contents"></use>
+				</svg>
+				<span class="hover-show text">目录</span>
+			</button>
+			<div class="toc-container">
+				<div class="pos-box">
+					<div class="icon-arrow"></div>
+					<div class="scroll-box">
+						<div class="toc-box"></div>
+					</div>
+				</div>
+				<div class="opt-box">
+					<button class="btn-opt prev nomore" title="向上">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#csdnc-chevronup"></use>
+						</svg>
+					</button>
+					<button class="btn-opt next">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#csdnc-chevrondown"></use>
+						</svg>
+					</button>
+				</div>
+			</div>
+		</li>
+		<li>
+			<button class="btn-bookmark low-height hover-box" title="收藏">
+				<svg class="icon active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-bookmark-ok"></use>
+				</svg>
+				<svg class="icon no-active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-bookmark"></use>
+				</svg>
+					<span class="hover-show text">收藏</span>
+				<!-- <span class="hover-show text-box text">
+					<span class="no-active">收藏</span>
+					<span class="active">取消收藏</span>
+				</span> -->
+			</button>
+		</li>
+				<li class="bdsharebuttonbox">
+			<button class="btn-comments low-height hover-box" >
+				<a href="#" class="bds_weixin clear-share-style" data-cmd="weixin" title="手机看"></a>
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-wechat"></use>
+				</svg>
+				<span class="hover-show text text3">
+					手机看
+				</span>
+			</button>
+		</li>
+							<li class="widescreen-hide">
+				<a class="btn-comments low-height hover-box" href="https://blog.csdn.net/zhaoxinfan/article/details/12745067" title="A. Vasya and Digital Root">
+					<svg class="icon hover-hide" aria-hidden="true">
+						<use xlink:href="#csdnc-shangyiye"></use>
+					</svg>
+					<span class="hover-show text text3">上一篇</span>
+				</a>
+			</li>
+								<li class="widescreen-hide">
+			<a class="btn-comments hover-box low-height" href="https://blog.csdn.net/zhaoxinfan/article/details/12772469" title="B. Vasya and Public Transport">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-xiayiye"></use>
+				</svg>
+				<span class="hover-show text text3">下一篇</span>
+			</a>
+		</li>
+						<li class="bdsharebuttonbox _360_interactive"style="margin-top: 8px;">
+			<script type="text/javascript" src="//cjhd.mediav.com/js/interactive_plugin.js"></script> 
+			<style>
+				#_360_interactive > *{
+					 margin-left: -8px;
+				}
+			</style>
+			<div id="_360_interactive" > 
+				<script> INTERACTIVE_PLUGIN.render({ showid : 'N0ufqn', w: 60, h: 60, type: 'click', placeholderId: '_360_interactive' }); </script> 
+			</div>
+			<img src="//img-ads.csdn.net/2016/201608021757063065.png" style="margin: 0 auto;display: block;" alt="">
+		</li>
+	  
+		<!-- 宽屏更多按钮 -->
+		<li class="widescreen-more">
+			<a class="btn-comments chat-ask-button low-height hover-box" title="快问" href="#chatqa">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-more"></use>
+				</svg>
+				<span class="hover-show text">更多</span>
+				
+			</a>
+			<ul class="widescreen-more-box">
+													<li class="widescreen-more">
+						<a class="btn-comments low-height hover-box" href="https://blog.csdn.net/zhaoxinfan/article/details/12745067" title="A. Vasya and Digital Root">
+							<svg class="icon hover-hide" aria-hidden="true">
+								<use xlink:href="#csdnc-shangyiye"></use>
+							</svg>
+							<span class="hover-show text text3">上一篇</span>
+						</a>
+					</li>
+																<li class="widescreen-more">
+					<a class="btn-comments hover-box low-height" href="https://blog.csdn.net/zhaoxinfan/article/details/12772469" title="B. Vasya and Public Transport">
+						<svg class="icon hover-hide" aria-hidden="true">
+							<use xlink:href="#csdnc-xiayiye"></use>
+						</svg>
+						<span class="hover-show text text3">下一篇</span>
+					</a>
+				</li>
+							</ul>
+		</li>
+	</ul>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'https://csdnimg.cn/static/api/js/share.js?v=89860594'];</script>
+<script>
+    var recommendCount = 10;
+    recommendCount = recommendCount > 1 ? (recommendCount + (recommendCount>6 ? 2 : 1)) : recommendCount;
+    var articleTit = "利用信息熵提取文章关键词";
+    var ChannelId = 17;
+    var articleId = "12751405";
+    var commentscount = 5;
+    var islock = false;
+    var curentUrl = "https://blog.csdn.net/zhaoxinfan/article/details/12751405";
+    var myUrl = "https://my.csdn.net/";
+    //1禁止评论，2正常
+    var commentAuth = 2;
+    //百度搜索
+    var baiduKey = "%E6%96%87%E6%9C%AC%E4%BF%A1%E6%81%AF%E7%86%B5%E5%85%B3%E9%94%AE%E8%AF%8D";
+    var needInsertBaidu = false;
+    // 代码段样式
+    var codeStyle = '';
+		var highlight = ["\u5229\u7528","\u4fe1\u606f\u71b5","\u63d0\u53d6","\u6587\u7ae0","\u5173\u952e\u8bcd"];//高亮数组
+		// 相关推荐博主数据
+    var RecommendBlogExpertList = [{"user_name":"wangyaninglm","nick_name":"wangyaninglm","avatar":"https:\/\/avatar.csdn.net\/1\/2\/9\/3_wangyaninglm.jpg","is_expert":true,"article_count":327},{"user_name":"napoay","nick_name":"mydpp","avatar":"https:\/\/avatar.csdn.net\/9\/9\/5\/3_napoay.jpg","is_expert":true,"article_count":235},{"user_name":"u013378306","nick_name":"u013378306","avatar":"https:\/\/avatar.csdn.net\/2\/7\/4\/3_u013378306.jpg","is_expert":false,"article_count":596},{"user_name":"u011561690","nick_name":"XD122","avatar":"https:\/\/avatar.csdn.net\/2\/B\/D\/3_u011561690.jpg","is_expert":false,"article_count":103},{"user_name":"xgjianstart","nick_name":"\u6253\u602a\u7684\u8682\u8681","avatar":"https:\/\/avatar.csdn.net\/E\/7\/3\/3_xgjianstart.jpg","is_expert":false,"article_count":307},{"user_name":"awj3584","nick_name":"awj3584","avatar":"https:\/\/avatar.csdn.net\/7\/8\/6\/3_awj3584.jpg","is_expert":false,"article_count":118},{"user_name":"u011327333","nick_name":"u011327333","avatar":"https:\/\/avatar.csdn.net\/5\/D\/F\/3_u011327333.jpg","is_expert":false,"article_count":53},{"user_name":"nkwshuyi","nick_name":"nkwshuyi","avatar":"https:\/\/avatar.csdn.net\/9\/C\/D\/3_nkwshuyi.jpg","is_expert":false,"article_count":69},{"user_name":"u011973972","nick_name":"lilijuan","avatar":"https:\/\/avatar.csdn.net\/7\/3\/2\/3_u011973972.jpg","is_expert":false,"article_count":31},{"user_name":"qian_xiaoqian","nick_name":"qian_xiaoqian","avatar":"https:\/\/avatar.csdn.net\/9\/1\/9\/3_qian_xiaoqian.jpg","is_expert":false,"article_count":203}];
+		
+		var articleType = 1;
+		var CopyrightContent = '本文为博主原创文章，未经博主允许不得转载。';
+</script>
+<script src="https://csdnimg.cn/public/sandalstrap/1.4/js/sandalstrap.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.js"></script>
+<script src='https://csdnimg.cn/public/common/gotop/js/goTop-v1.0.min.js?v201803151422'></script>
+<script>
+    GoTop({
+        right: 8,
+        hasReport: true,
+        reportFun: function() {
+            showReport(false,"利用信息熵提取文章关键词");
+        }
+    })
+</script>
+<script src="https://g.csdnimg.cn/login-box/1.0.1/login-box.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/js/common-ff25a7a98a.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/js/detail-a341548e20.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/themes/skin-yellow/skin-yellow-9376486353.min.js"></script>
+<script src="https://csdnimg.cn/search/baidu_search-1.1.2.js?v=201802071056&autorun=true&install=true&keyword=%E6%96%87%E6%9C%AC%E4%BF%A1%E6%81%AF%E7%86%B5%E5%85%B3%E9%94%AE%E8%AF%8D"  type="text/javascript"></script>
+</body>
+<!-- 第四范式SDK -->
+
+<!-- 高亮未与 markdown兼容  -->
+	<link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.3.1/ckeditor/plugins/chart/chart.css" />
+	<script type="text/javascript" src="https://csdnimg.cn/release/blog_editor_html/release1.3.1/ckeditor/plugins/chart/lib/chart.min.js"></script>
+	<script type="text/javascript" src="https://csdnimg.cn/release/blog_editor_html/release1.3.1/ckeditor/plugins/chart/widget2chart.js"></script>
+	<link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.3.1/ckeditor/plugins/codesnippet/lib/highlight/styles/atom-one-dark.css">
+	<script type="text/javascript" src="https://csdnimg.cn/release/phoenix/production/pc_wap_common-676a063698.js" /></script>
+
+	<script type="text/javascript">
+	$(function(){
+		var allEscRegex = /&(lt|gt|amp|quot|nbsp|shy|#\d{1,5});/g,
+		    namedEntities = {
+					lt: '<',
+					gt: '>',
+					amp: '&',
+					quot: '"',
+					nbsp: '\u00a0',
+					shy: '\u00ad'
+				}
+		var allEscDecode = function( match, code ) {
+				return namedEntities[ code ];
+		};
+		htmlDecodeAttr = function( text ) {
+				return text.replace( allEscRegex, allEscDecode );
+		}
+	  hljs.initHighlightingOnLoad();
+	  hljs.initCopyButtonOnLoad();
+	  hljs.initLineNumbersOnLoad();
+		if($('pre .language-plain').length>0){
+			$('pre .language-plain').each(function(i,e){
+				var highlightRe = hljs.highlightAuto(htmlDecodeAttr(e.innerHTML))
+				e.innerHTML = highlightRe.value;
+				e.className = 'language-'+highlightRe.language;
+			});
+		}
+	})
+	</script>
+<script type="text/javascript" src="https://static-blog.csdn.net/mdeditor/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            "HTML-CSS": {
+                    linebreaks: { automatic: true, width: "94%container" },
+                    imageFont: null
+            },
+            tex2jax: {
+                preview: "none"
+            },
+            mml2jax: {
+                preview: 'none'
+            }
+    });
+</script>
+</html>

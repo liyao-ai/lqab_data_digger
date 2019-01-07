@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="canonical" href="https://blog.csdn.net/zxh19800626/article/details/50190803"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="referrer" content="always">
+    <meta name="description" content="这几天在研究如何用统计方法来发现新词，扩充自己的词典。看到了几篇很有想法的文章，作者阐述了一下思路。文章里面的数据，我计算了一下，发现文有很多数据不够严谨，最主要的问题，并没有给出很详细的理论方面的说明。结合作者的思路，我进行了如下数学模型的构建和算法的实现。
+一、概念介绍
+1、词语分片
+设一个文档集 。其中，为一个文本，。
+设 为文档的分片集合。其中，为文档的一个词语分片，分片就是按st" />
+    <meta name="keywords" content="" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+    <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848">
+    <script src="https://csdnimg.cn/release/phoenix/vendor/tingyun/tingyun-rum-blog.js"></script>
+
+    <link href="https://csdnimg.cn/public/favicon.ico" rel="SHORTCUT ICON">
+    <title>基于信息熵的无字典分词算法 - bigdatafly - CSDN博客</title>
+
+            <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/detail-7f037a8adb.min.css">
+        <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/themes/skin3-template/skin3-template-9b39979775.min.css">
+
+    <script type="text/javascript">
+        var username = "zxh19800626";
+        var blog_address = "https://blog.csdn.net/zxh19800626";
+        var static_host = "https://csdnimg.cn/release/phoenix/";
+        var currentUserName = "";
+        var isShowAds = true;
+        var isOwner = false;
+        var loginUrl = "https://passport.csdn.net/account/login?from=https://blog.csdn.net/zxh19800626/article/details/50190803"
+        var blogUrl = "https://blog.csdn.net/";
+        //页面皮肤样式
+        var curSkin = "skin3-template";
+        // 第四范式所需数据
+        var articleTitles = "基于信息熵的无字典分词算法 - bigdatafly";
+        var articleID = "50190803";
+
+        var nickName = "晨晨的使魔";
+    </script>
+    <script type="text/javascript">
+        // Traffic Stats of the entire Web site By baidu
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?6bcd52f51e9b3dce32bec4a3997715ac";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+        // Traffic Stats of the entire Web site By baidu end
+    </script>
+    <script src="https://csdnimg.cn/public/common/libs/jquery/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="https://csdnimg.cn/rabbit/exposure-click/main-1.0.6.js"></script>
+    <!-- 新版上报 -->
+    <script src="//g.csdnimg.cn/track/1.1.1/track.js" type="text/javascript"></script>
+    <!-- 新版上报end -->
+            <link rel="stylesheet" href="https://csdnimg.cn/public/sandalstrap/1.4/css/sandalstrap.min.css">
+    <style>
+        .MathJax, .MathJax_Message, .MathJax_Preview{
+            display: none
+        }
+    </style>
+</head>
+<!-- nodata 第三栏接口无数据时样式不变 -->
+<body class="nodata"> 
+    <link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+    <script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+<script type="text/javascript" src="//static.mediav.com/js/mvf_news_feed.js"></script>
+<script type="text/javascript" src="//g.csdnimg.cn/copyright/1.0.2/copyright.js"></script>
+<div style="display:none;">
+	<img src="" onerror='setTimeout(function(){if(!/(csdn.net|iteye.com|baiducontent.com|googleusercontent.com|360webcache.com|sogoucdn.com|bingj.com|baidu.com)$/.test(window.location.hostname)){window.location.href="\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x63\x73\x64\x6e\x2e\x6e\x65\x74"}},3000);'>
+</div>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/chart-3456820cac.css" />
+
+
+
+<script src="https://dup.baidustatic.com/js/ds.js"></script>
+<div class="container clearfix" id="mainBox">
+		<!-- <div id="breadcrumbs">
+			<span><a href="https://blog.csdn.net/">博客首页</a></span>
+			<i>></i>
+			<span><a href="https://blog.csdn.net/zxh19800626">bigdatafly</a></span>
+			<i>></i>
+			<span>基于信息熵的无字典分词算法</span>
+		</div> -->
+		<div class="recommend-right">
+  <ul class="recommend-fixed-box">
+    
+  </ul>
+</div>
+    <main>
+        <div class="blog-content-box">
+	<div class="article-header-box">
+		<div class="article-header">
+			<div class="article-title-box">
+				<span class="article-type type-1 float-left">原</span>				<h1 class="title-article">基于信息熵的无字典分词算法</h1>
+			</div>
+			<div class="article-info-box">
+				<div class="article-bar-top">
+																				<span class="time">2015年12月05日 23:46:50</span>
+					<a class="follow-nickName" href="https://me.csdn.net/zxh19800626" target="_blank">晨晨的使魔</a>
+						<span class="read-count">阅读数：651</span>
+						
+																															</div>
+				<div class="operating">
+														</div>
+			</div>
+		</div>
+	</div>
+	<article>
+		<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog"  data-mod=popu_307  data-dsm = "post" >
+								<div class="article-copyright">
+					版权声明：本文为博主原创文章，未经博主允许不得转载。					https://blog.csdn.net/zxh19800626/article/details/50190803				</div>
+								            <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-85423d2993.css" />
+						<div class="htmledit_views">
+                这几天在研究如何用统计方法来发现新词，扩充自己的词典。看到了几篇很有想法的文章，作者阐述了一下思路。文章里面的数据，我计算了一下，发现文有很多数据不够严谨，最主要的问题，并没有给出很详细的理论方面的说明。结合作者的思路，我进行了如下数学模型的构建和算法的实现。
+<p style="text-align:left;">一、概念介绍</p>
+<p style="text-align:left;text-indent:21pt;">1、词语分片</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">设一个文档集 <img src="http://images2015.cnblogs.com/blog/804386/201512/804386-20151202224932189-709497642.png" alt="" />。其中，<img src="http://images2015.cnblogs.com/blog/804386/201512/804386-20151202224945674-1755098009.png" alt="" />为一个文本，<img src="http://images2015.cnblogs.com/blog/804386/201512/804386-20151202224957955-1753947418.png" alt="" />。</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">设 <img src="http://images2015.cnblogs.com/blog/804386/201512/804386-20151202225009408-1899436006.png" alt="" />为文档<img src="http://images2015.cnblogs.com/blog/804386/201512/804386-20151202225019518-1664188139.png" alt="" />的分片集合。其中，<img src="http://images2015.cnblogs.com/blog/804386/201512/804386-20151202225028268-615903185.png" alt="" />为文档的一个词语分片，分片就是按step步长对文档进行分割的词语单位。这里说的词语分片可以是一个字、一个词或者一个长词。</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">譬如：中国队，</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">按step=1进行切分 S={中，国，队}</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">按step=2进行切分 S={中，国，队，中国，国队}</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">按step=3进行切分 S={中，国，队，中国，国队，中国队}。</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">当然，这个定义可以推广到有字典的情况：</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">譬如 字典 {中国}</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">"中国国家队"的词语分片为{中国，国，家，队，中国国，国家，家队，中国国家，国家队，中国国家队}。</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">这样来看，一个<img src="http://images2015.cnblogs.com/blog/804386/201512/804386-20151202225047814-588077185.png" alt="" />文本分若干段落；一个段落通过标点符号进行分割，分割成若干短句，我们成为语义单元；一个语义单元按step步长进行切分成若干个词语切片。我们把所有切片合并成一个大集合<img src="http://images2015.cnblogs.com/blog/804386/201512/804386-20151202225509393-1472503834.png" alt="" />。</p>
+<p style="text-align:left;text-indent:21pt;">2、分片属性</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">为了解决上面的问题，对于分片S我们从分片概率、分片频度、自由度、凝固程度等属性去考虑。这些属性都是概率变量。</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">这样，一个分片s用6个属性去进行描述 <img src="http://images2015.cnblogs.com/blog/804386/201512/804386-20151202225115096-1942273845.png" alt="" /></p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">参数说明</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">f： 文档唯一标识</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">w: 分片的频度,表示分片在一种切分过程中出现的次数</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">s: 分片</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">co: 分片的凝固度</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">fr: 分片的自由度</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">st: 分片的概率</p>
+<p style="text-align:left;text-indent:21pt;">3、词语分片的概率</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">分片的概率，如果一个字串S长度为L，按stepN进行切分，切分出来的集合为M，为每个分片的频度。那么每一个分片的概率可以用下面公式表示：</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;"> </p>
+<p style="text-align:center;text-indent:21pt;margin-left:21pt;"><img src="http://images2015.cnblogs.com/blog/804386/201512/804386-20151202225214658-2111857319.png" alt="" />----------------------------------------------------------（1）</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">S="中国国家的中国队",长度N = 8 按step=2进行切分，切分为</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">M={中，国，家，的，队，中国，国国，国家，家的，的中，国队}。</p>
+<table style="width:654px;border-collapse:collapse;" align="center"><tbody><tr><td style="width:42.6pt;border:.5pt solid;" valign="top">
+<p style="text-align:left;">分片</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:.5pt solid;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">中</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:.5pt solid;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">国</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:.5pt solid;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">家</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:.5pt solid;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">的</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:.5pt solid;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">队</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:.5pt solid;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">中国</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:.5pt solid;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">国国</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:.5pt solid;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">国家</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:.5pt solid;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">家的</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:.5pt solid;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">的中</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.6pt;border-top:.5pt solid;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">国队</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.85pt;border-top:.5pt solid;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">总计</p>
+</td>
+</tr><tr><td style="border-bottom:.5pt solid;border-left:.5pt solid;width:42.6pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">频次</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">2</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">3</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">1</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">1</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">1</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">2</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">1</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">1</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">1</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">1</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.6pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">1</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.85pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">15</p>
+</td>
+</tr><tr><td style="border-bottom:.5pt solid;border-left:.5pt solid;width:42.6pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">P</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">2/15</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">3/15</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">1/15</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">1/15</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">1/15</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">2/15</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">1/15</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">1/15</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">1/15</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.15pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">1/15</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.6pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">1/15</p>
+</td>
+<td style="border-bottom:.5pt solid;border-left:medium none;width:35.85pt;border-top:medium none;border-right:.5pt solid;" valign="top">
+<p style="text-align:left;">100%</p>
+</td>
+</tr></tbody></table><p style="text-align:left;text-indent:21pt;margin-left:21pt;"> </p>
+<p style="text-align:left;text-indent:21pt;">4、分片的凝固度</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">要想从一段文本中抽出词来，我们的第一个问题就是，怎样的文本片段才算一个词？大家想到的第一个标准或许是，看这个文本片段出现的次数是否足够多。我们可以把所有出现频数超过某个阈值的片段提取出来，作为该语料中的词汇输出。不过，光是出现频数高还不够，一个经常出现的文本片段有可能不是一个词，而是多个词构成的词组。通过我们的数据分析，"的电影"出现了 389 次，"电影院"只出现了 175 次，然而我们却更倾向于把"电影院"当作一个词，因为直觉上看，"电影"和"院"凝固得更紧一些。</p>
+<p style="text-align:left;text-indent:21pt;margin-left:21pt;">为了描述这个属性，我们用一下公式：</p>
+<p style="text-align:center;"><img src="http://images2015.cnblogs.com/blog/804386/201512/804386-20151202225230814-2093464699.png" alt="" />---------------------------------（2）</p>
+<p style="text-align:left;margin-left:60px;"><img src="http://images2015.cnblogs.com/blog/804386/201512/804386-20151202225326893-1579237470.png" alt="" />为分片的概率，<img src="http://images2015.cnblogs.com/blog/804386/201512/804386-20151202225335986-1092310500.png" alt="" />分片对应的子分片的概率。</p>
+<p style="text-align:left;">     分片"电影院"的概率P（电影院）=0.0005 电影院对应的子分片 {电影，院} 和{电，影院}，</p>
+<p style="text-align:left;">"的电影"的凝合程度则是 p(的电影) 分别除以 p(的) · p(电影) 和 p(的电) · p(影) 所得的商的较小值。</p>
+<p style="text-align:left;text-indent:21pt;">光看文本片段内部的凝合程度还不够，我们还需要从整体来看它在外部的表现。考虑"被子"和"辈子"这两个片段。我们可以说"买被子"、"盖被子"、"进被子"、"好被子"、"这被子"等等，在"被子"前面加各种字；但"辈子"的用法却非常固定，除了"一辈子"、"这辈子"、"上辈子"、"下辈子"，基本上"辈子"前面不能加别的字了。"辈子"这个文本片段左边可以出现的字太有限，以至于直觉上我们可能会认为，"辈子"并不单独成词，真正成词的其实是"一辈子"、"这辈子"之类的整体。可见，文本片段的自由运用程度也是判断它是否成词的重要标准。如果一个文本片段能够算作一个词的话，它应该能够灵活地出现在各种不同的环境中，具有非常丰富的左邻字集合和右邻字集合。</p>
+<p style="text-align:left;">二、信息熵和自由度</p>
+<p style="text-align:left;text-indent:21pt;">"信息熵"是一个非常神奇的概念，它能够反映知道一个事件的结果后平均会给你带来多大的信息量。如果某个结果的发生概率为 p ，当你知道它确实发生了，你得到的信息量就被定义为 - log(p) 。 p 越小，你得到的信息量就越大。</p>
+<p style="text-align:left;text-indent:21pt;">设U1…Ui…Un，对应概率为：P1…Pi…Pn，且各种符号的出现彼此独立。这时，信源的平均不确定性应当为单个符号不确定性-logPi的统计平均值（E），可称为信息熵，即</p>
+<p style="text-align:center;text-indent:21pt;"><img src="http://images2015.cnblogs.com/blog/804386/201512/804386-20151202225244689-1936495038.png" alt="" />----------------------------------------------（3）</p>
+<p style="text-align:left;text-indent:21pt;">式中对数一般取2为底，单位为比特。</p>
+<p style="text-align:left;text-indent:21pt;">我们用信息熵来衡量一个文本片段的左邻字集合和右邻字集合有多随机。考虑这么一句话"吃葡萄不吐葡萄皮不吃葡萄倒吐葡萄皮"，"葡萄"一词出现了四次，其中左邻字分别为 {吃, 吐, 吃, 吐} ，右邻字分别为 {不, 皮, 倒, 皮} 。根据公式，"葡萄"一词的左邻字的信息熵为 - (1/2) · log(1/2) - (1/2) · log(1/2) ≈ 0.693 ，它的右邻字的信息熵则为 - (1/2) · log(1/2) - (1/4) · log(1/4) - (1/4) · log(1/4) ≈ 1.04 。可见，在这个句子中，"葡萄"一词的右邻字更加丰富一些。</p>
+<p style="text-align:left;text-indent:21pt;">我们不妨就把一个文本片段的自由运用程度定义为它的左邻字信息熵和右邻字信息熵中的较小值。</p>
+<p style="text-align:center;text-indent:21pt;"><img src="http://images2015.cnblogs.com/blog/804386/201512/804386-20151202225253830-1430144237.png" alt="" /> ------------------------------------------（4）</p>
+<p style="text-indent:21pt;text-align:left;">通过信息熵算法，可以很好的区分一些专有名词像玫瑰、蝙蝠等，一些地名像新西兰、伦敦等，这些自由度较低的词汇的。</p>
+<p style="text-align:left;">三、算法的构建</p>
+<p style="text-align:left;text-indent:21pt;">在实际运用中你会发现，文本片段的凝固程度和自由程度，两种判断标准缺一不可。只看凝固程度的话，程序会找出"巧克"、"俄罗"、"颜六色"、"柴可夫"等实际上是"半个词"的片段；只看自由程度的话，程序则会把"吃了一顿"、"看了一遍"、"睡了一晚"、"去了一趟"中的"了一"提取出来，因为它的左右邻字都太丰富了。 <br />
+无词典分词法的基本步骤：</p>
+<p style="text-align:left;text-indent:-21.25pt;margin-left:21.25pt;">1. 输入阀值参数 出现频数w、凝固程度co、自由程度fr和最大切片stepN，词典集合的大小N；</p>
+<p style="text-align:left;text-indent:-21.25pt;margin-left:21.25pt;">2. 对文档集进行预处理，包括：编码转换、全半角 处理、字符转换，再将停用词、英文字母、数学运算符等其它非汉字字符用占位符替代；</p>
+<p style="text-align:left;text-indent:-21.25pt;margin-left:21.25pt;">3. 从文档集里取一个文档D，按1，2，...,stepN进行切片形成切片集合S；</p>
+<p style="text-align:left;text-indent:-21.25pt;margin-left:21.25pt;">4. 通过公式(1)计算切片集合S的每一个切片的频数W和概率P,通过给定频数阀值过滤；</p>
+<p style="text-align:left;text-indent:-21.25pt;margin-left:21.25pt;">5. 结果4 中的长度&gt;1的词语切片，通过公式(2)计算凝固程度，并通过给定的阀值参数过滤。</p>
+<p style="text-align:left;text-indent:-21.25pt;margin-left:21.25pt;">6. 结果5 中的词语切片，通过公式(3)计算左邻右邻的信息熵,通过公式(4)，得出词语切片的自由度，并通过给定的阀值参数过滤。</p>
+<p style="text-align:left;text-indent:-21.25pt;margin-left:21.25pt;">7. 对于结果6，按照分片的频数倒排序，取前N个，就产生了我们需要的词典。</p>
+<p style="text-align:left;text-indent:21pt;"> </p>
+<p style="text-align:left;">四、参考</p>
+<p>《基于<span style="font-family:Calibri;">SNS</span><span style="font-family:'宋体';">的文本数据挖掘</span>》<span style="font-family:Calibri;">http://www.matrix67.com/blog/archives/5044</span></p>
+<p style="text-align:left;text-indent:21pt;"> </p>
+<p> </p>            </div>
+                </div>
+									<div class="hide-article-box text-center">
+						<a class="btn" id="btn-readmore" data-track-view='{"mod":"popu_376","con":",https://blog.csdn.net/zxh19800626/article/details/50190803,"}' data-track-click='{"mod":"popu_376","con":",https://blog.csdn.net/zxh19800626/article/details/50190803,"}'>阅读更多</a>
+					</div>
+					<script>
+						(function(){
+							function setArticleH(btnReadmore,posi){
+								var winH = $(window).height();
+								var articleBox = $("div.article_content");
+								var artH = articleBox.height();
+								if(artH > winH*posi){
+									articleBox.css({
+										'height':winH*posi+'px',
+										'overflow':'hidden'
+									})
+									btnReadmore.click(function(){
+										articleBox.removeAttr("style");
+										$(this).parent().remove();
+									})
+								}else{
+									btnReadmore.parent().remove();
+								}
+							}
+							var btnReadmore = $("#btn-readmore");
+							if(btnReadmore.length>0){
+								if(currentUserName){
+									setArticleH(btnReadmore,3);
+								}else{
+									setArticleH(btnReadmore,1.2);
+								}
+							}
+						})()
+					</script>
+					</article>
+	
+</div>
+<script>
+		$(".MathJax").remove();
+		if($('div.markdown_views pre.prettyprint code.hljs').length > 0 ){
+				$('div.markdown_views')[0].className = 'markdown_views';
+		}
+</script>
+        <div class="p4course_target" ></div><script>window.p4sdk_enable_courseBox=true</script>        <a id="commentBox"></a>
+<div class="comment-box">
+	  	<div class="unlogin-box text-center">
+		想对作者说点什么？
+		<!-- $curl 当前地址 -->
+		<button id="btnCommentUnlogin" class="btn btn-sm btn-red">我来说一句</button>
+	</div>
+			<div class="comment-list-container">
+		<a id="comments"></a>
+		<div class="comment-list-box">
+		</div>
+		<div id="commentPage" class="pagination-box d-none"></div>
+		<div class="opt-box text-center">
+			<button class="btn btn-sm btn-link-blue" id="btnMoreComment"></button>
+		</div>
+	</div>
+</div>
+        <div class="recommend-box">
+            		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_387","con":",https://blog.csdn.net/jj12345jj198999/article/details/12751405,BlogCommendFromBaidu_0"}' data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/jj12345jj198999/article/details/12751405,BlogCommendFromBaidu_0"}'>
+		<a href="https://blog.csdn.net/jj12345jj198999/article/details/12751405" target="_blank" title="利用信息熵提取文章关键词">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						利用<em>信息熵</em>提取文章关键词				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/A/0/5/3_jj12345jj198999.jpg" alt="jj12345jj198999" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">jj12345jj198999</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-15</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							7678</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							目前，对于文章中提取关键词最常用的方法莫过于TF-IDF，但是这样提取出来的关键词并不一定准确。
+ 
+举个最简单的例子来说，在新闻中最前面出现“记者李元芳报道”，分词后的结果是“记者、李元芳、报道...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_387","con":",https://blog.csdn.net/chuchus/article/details/78246648,BlogCommendFromBaidu_1"}' data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/chuchus/article/details/78246648,BlogCommendFromBaidu_1"}'>
+		<a href="https://blog.csdn.net/chuchus/article/details/78246648" target="_blank" title="互信息和左右信息熵 用于 NLP 中的短语识别与提取">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						互信息和左右<em>信息熵</em> 用于 NLP 中的短语识别与提取				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/0/5/F/3_chuchus.jpg" alt="chuchus" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">chuchus</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-16</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							568</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							标准词典分词的粒度通常太小, 相比之下短语就有更丰富的含义. 
+如 算法/工程师vs算法工程师, 智能/手表vs智能手表.互信息和左右信息熵参考
+基于互信息和左右信息熵的短语提取识别...					</p>
+			</div>
+					</a>
+	</div>
+									<!-- 第四范式广告开关 -->
+				<div class="p4courset3_target _4paradigm_box recommend-item-box clearfix" ></div>
+				<script>window.p4sdk_enable_recommendBox=true</script>
+			
+					<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_387","con":",https://blog.csdn.net/wangliang_f/article/details/17584671,BlogCommendESEnWordWeight_2"}' data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/wangliang_f/article/details/17584671,BlogCommendESEnWordWeight_2"}'>
+		<a href="https://blog.csdn.net/wangliang_f/article/details/17584671" target="_blank" title="统计分词/无字典分词学习(5):候选片段的过滤方法，边界稳定性">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						统计分词/无<em>字典</em>分词学习(5):候选片段的过滤方法，边界稳定性				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/6/1/B/3_wangliang_f.jpg" alt="wangliang_f" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">wangliang_f</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-26</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							846</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							互信息主要是过滤掉那些内部结合不紧密的片段，但只过滤掉了3%的无意义片段，而我们会发现，大量的不是词的片段是这样的形式：
+informa、informat、informati，informatio这样...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_387","con":",https://blog.csdn.net/ygrx/article/details/8926274,BlogCommendESEnWordWeight_3"}' data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/ygrx/article/details/8926274,BlogCommendESEnWordWeight_3"}'>
+		<a href="https://blog.csdn.net/ygrx/article/details/8926274" target="_blank" title="一种没有语料字典的分词方法">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						一种没有语料<em>字典</em>的分词方法				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/C/F/7/3_ygrx.jpg" alt="ygrx" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">ygrx</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-14</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							5535</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							前几天在网上闲逛，看到一篇美文，说的是怎么在没有语料库的情况下从文本中提取中文词汇，理论部分讲得比较多，但都还是很浅显易懂的，其中涉及一部分信息论的理论，其实只要大学开过信息论这门课的话，看起来还是挺...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_387","con":",https://blog.csdn.net/wangliang_f/article/details/17786809,BlogCommendFromBaidu_4"}' data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/wangliang_f/article/details/17786809,BlogCommendFromBaidu_4"}'>
+		<a href="https://blog.csdn.net/wangliang_f/article/details/17786809" target="_blank" title="统计分词/无字典分词学习(7): 模型方法">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						统计分词/无<em>字典</em>分词学习(7): 模型方法				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/6/1/B/3_wangliang_f.jpg" alt="wangliang_f" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">wangliang_f</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">01-03</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							936</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							前面几篇讨论的统计分词基本都是基于这样一个理念，首先，把所有的ngram片段都当成候选词，这些ngram的概率可以用极大似然估计获得；然后，选择一系列指标来过滤这些ngram片段，主要的指标包括词频、...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_387","con":",https://blog.csdn.net/u014296371/article/details/80713293,BlogCommendFromBaidu_5"}' data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/u014296371/article/details/80713293,BlogCommendFromBaidu_5"}'>
+		<a href="https://blog.csdn.net/u014296371/article/details/80713293" target="_blank" title="计算文本信息熵">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						计算文本<em>信息熵</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/0/B/D/3_u014296371.jpg" alt="u014296371" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">u014296371</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-16</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							184</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							package Nlp;
+
+import org.apache.commons.lang.StringUtils;
+import java.io.*;
+import java.nio.charset....					</p>
+			</div>
+					</a>
+	</div>
+								<div class="recommend-item-box recommend-ad-box" id="a_d_feed_0"></div>
+			<script>
+				var width = $("div.recommend-box").outerWidth() - 48;
+				NEWS_FEED({
+					w: width,
+					h: 60,
+					showid: 'Afihld',
+					placeholderId: 'a_d_feed_0',
+					inject: 'define',
+					define: {
+						imagePosition: 'left',
+						imageBorderRadius: 0,
+						imageWidth: 90,
+						imageHeight: 60,
+						imageFill: 'clip',
+						displayImage: true,
+						displayTitle: true,
+						titleFontSize: 20,
+						titleFontColor: '#333',
+						titleFontFamily: 'Microsoft Yahei',
+						titleFontWeight: 'bold',
+						titlePaddingTop: 0,
+						titlePaddingRight: 0,
+						titlePaddingBottom: 10,
+						titlePaddingLeft: 8,
+						displayDesc: true,
+						descFontSize: 14,
+						descPaddingLeft: 14,
+						descFontColor: '#6b6b6b',
+						descFontFamily: 'Microsoft Yahei',
+						paddingTop: 0,
+						paddingRight: 0,
+						paddingBottom: 0,
+						paddingLeft: 0,
+						backgroundColor: '#fff',
+						hoverColor: '#ca0c16'
+					}
+				})
+			</script>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_387","con":",https://blog.csdn.net/riverflowrand/article/details/50056793,BlogCommendFromBaidu_6"}' data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/riverflowrand/article/details/50056793,BlogCommendFromBaidu_6"}'>
+		<a href="https://blog.csdn.net/riverflowrand/article/details/50056793" target="_blank" title="《基 于 N Gram 的无词典 中文分词算法》     n-gram读感">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						《基 于 N Gram 的无词典 中文<em>分词算法</em>》     n-gram读感				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/8/5/C/3_riverflowrand.jpg" alt="riverflowrand" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">riverflowrand</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-26</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							1476</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							二元的叫bigram，三元的叫trigram。
+以bigram来说：
+(1) Average(k) &gt; Average(k 一1) ＆Average(k) &gt; A verage(k + 1) ；...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_387","con":",https://blog.csdn.net/xiuchixc/article/details/8095849,BlogCommendFromBaidu_7"}' data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/xiuchixc/article/details/8095849,BlogCommendFromBaidu_7"}'>
+		<a href="https://blog.csdn.net/xiuchixc/article/details/8095849" target="_blank" title="笔记-2004-基于无指导学习策略的无词表条件下的汉语自动分词">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						笔记-2004-<em>基于</em>无指导学习策略的无词表条件下的汉语自动分词				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/1/E/2/3_xiuchixc.jpg" alt="xiuchixc" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">xiuchixc</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-21</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							353</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							基于无指导学习策略的无词表条件下的汉语自动分词
+孙茂松，肖明，邹嘉彦
+清华大学、香港城市大学
+2004年6月计算机学报
+互信息、t-测试差、线性叠加、波峰波谷
+
+
+由于这个时候还没有SI...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_387","con":",https://blog.csdn.net/u012492756/article/details/60870047,BlogCommendFromBaidu_8"}' data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/u012492756/article/details/60870047,BlogCommendFromBaidu_8"}'>
+		<a href="https://blog.csdn.net/u012492756/article/details/60870047" target="_blank" title="无词典分词学习笔记">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						无词典分词学习笔记				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/6/9/1/3_u012492756.jpg" alt="u012492756" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">u012492756</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">03-08</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							245</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							文章链接 http://www.matrix67.com/blog/archives/5044  互联网时代的社会语言学：基于SNS的文本数据挖掘
+在这里写一下学习笔记。
+
+
+两词相关性：在语...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_387","con":",https://blog.csdn.net/dQCFKyQDXYm3F8rB0/article/details/78758550,BlogCommendFromGuangxin_9"}' data-track-click='{"mod":"popu_387","con":",https://blog.csdn.net/dQCFKyQDXYm3F8rB0/article/details/78758550,BlogCommendFromGuangxin_9"}'>
+		<a href="https://blog.csdn.net/dQCFKyQDXYm3F8rB0/article/details/78758550" target="_blank" title="用Python分析《红楼梦》：见证了贾府的兴衰，你是否还能“笑道”世事无常">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						用Python分析《红楼梦》：见证了贾府的兴衰，你是否还能“笑道”世事无常				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/6/9/F/3_dqcfkyqdxym3f8rb0.jpg" alt="dQCFKyQDXYm3F8rB0" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">dQCFKyQDXYm3F8rB0</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">12-09</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							1265</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							没读过《红楼梦》也能知道前后四十回是不是一个作者写的？很久以前，数据侠黎晨，用机器学习的算法分析了《红楼梦》，认为后四十回和前八十回内容上有明显差距。不过，数据侠楼宇却不这么认为，他觉得原先的判定方法...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box type_hot_word">
+									<div class="content clearfix oneline">
+				<h5 class="float-left">相关热词</h5>
+				<div class="float-left">
+									<span>
+						<a href="https://blog.csdn.net/rcj183419/article/details/67632190" target="_blank">
+						——基于</a>
+					</span>
+									<span>
+						<a href="https://blog.csdn.net/zhangsan_3/article/details/53510595" target="_blank">
+						基于流和基于包</a>
+					</span>
+									<span>
+						<a href="https://blog.csdn.net/zhangsan_3/article/details/53510595" target="_blank">
+						基于流基于包</a>
+					</span>
+									<span>
+						<a href="https://blog.csdn.net/aidem_brown/article/details/75136826" target="_blank">
+						mqtt基于基于</a>
+					</span>
+									<span>
+						<a href="https://blog.csdn.net/htq__/article/details/54289797" target="_blank">
+						基于寄存器基于栈</a>
+					</span>
+								</div>
+			</div>
+					</div>
+		<div class="recommend-item-box blog-expert-recommend-box">
+			<h4 class="text-truncate">博主推荐
+			</h4>
+			<div class="blog-expert-recommend">
+				<div class="blog-expert-load-new" data-index="3">
+					<svg version="1.1" viewBox="0 0 200 200" style="enable-background:new 0 0 200 200;" xml:space="preserve">
+					<path d="M142.5,57.5c-1.3-1.2-2.1-3.3-2.1-5.4c0-4.2,3.3-7.5,7.5-7.5h19.6c4.2,0,7.5,3.3,7.5,7.5s-3.3,7.5-7.5,7.5h-4.2
+					 C170.8,71.2,175,85,175,100c0,41.7-33.8,75-75,75c-4.2,0-7.5-3.3-7.5-7.5c0-4.2,3.3-7.5,7.5-7.5c33.3,0,60-27.1,60-60
+					 C160,83.7,153.8,68.7,142.5,57.5L142.5,57.5z M57.5,142.5c1.2,1.2,2.1,3.3,2.1,5.4c0,4.2-3.3,7.5-7.5,7.5H32.5
+					 c-4.2,0-7.5-3.3-7.5-7.5c0-4.2,3.3-7.5,7.5-7.5h4.2C29.2,128.8,25,115,25,100c0-41.7,33.7-75,75-75c4.2,0,7.5,3.3,7.5,7.5
+					 S104.2,40,100,40c-33.3,0-60,27.1-60,60C40,116.2,46.2,131.2,57.5,142.5z"/>
+					</svg>
+					<span>换一批</span>
+				</div>
+				<div class="blog-expert">
+				</div>
+			</div>
+		</div>
+
+
+            <div class="recommend-loading-box">
+                <img src='https://csdnimg.cn/release/phoenix/images/feedLoading.gif'>
+            </div>
+            <div class="recommend-end-box">
+                <p class="text-center">没有更多推荐了，<a href="https://blog.csdn.net/" class="c-blue c-blue-hover c-blue-focus">返回首页</a></p>
+            </div>
+        </div>
+    </main>
+
+    <aside>
+		    <div id="asideProfile" class="aside-box">
+    <!-- <h3 class="aside-title">个人资料</h3> -->
+    <div class="profile-intro d-flex">
+        <div class="avatar-box d-flex justify-content-center flex-column">
+            <a href="https://blog.csdn.net/zxh19800626">
+                <img src="https://avatar.csdn.net/9/4/C/3_zxh19800626.jpg" class="avatar_pic">
+            </a>
+        </div>
+        <div class="user-info d-flex justify-content-center flex-column">
+            <p class="name csdn-tracking-statistics tracking-click" data-mod="popu_379">
+                <a href="https://blog.csdn.net/zxh19800626" target="_blank" class="" id="uid">晨晨的使魔</a>
+            </p>
+                    </div>
+                <div class="opt-box d-flex justify-content-center flex-column">
+            <span  class="csdn-tracking-statistics tracking-click" data-mod="popu_379">
+                <a class="btn btn-sm btn-red-hollow" id="btnAttent">关注</a>
+            </span>
+                    </div>
+            </div>
+    <div class="data-info d-flex item-tiling">
+                <dl class="text-center" title="22">
+                        <dt><a href="https://blog.csdn.net/zxh19800626?t=1">原创</a></dt>
+            <dd><a href="https://blog.csdn.net/zxh19800626?t=1"><span class="count">22</span></a></dd>
+                    </dl>
+        <dl class="text-center" id="fanBox" title="5">
+            <dt>粉丝</dt>
+            <dd><span class="count" id="fan">5</span></dd>
+        </dl>
+        <dl class="text-center" title="0">
+            <dt>喜欢</dt>
+            <dd><span class="count">0</span></dd>
+        </dl>
+        <dl class="text-center" title="0">
+            <dt>评论</dt>
+            <dd><span class="count">0</span></dd>
+        </dl>
+    </div>
+    <div class="grade-box clearfix">
+        <dl>
+            <dt>等级：</dt>
+            <dd>
+                <a href="https://blog.csdn.net/home/help.html#level" title="2级,点击查看等级说明" target="_blank">
+                    <svg class="icon icon-level" aria-hidden="true">
+                        <use xlink:href="#csdnc-bloglevel-2"></use>
+                    </svg>
+                </a>
+            </dd>
+        </dl>
+        <dl>
+            <dt>访问：</dt>
+            <dd title="12978">
+                1万+            </dd>
+        </dl>
+        <dl>
+            <dt>积分：</dt>
+            <dd title="122">
+                122            </dd>
+        </dl>
+        <dl title="1236705">
+            <dt>排名：</dt>
+            <dd>123万+</dd>
+        </dl>
+    </div>
+    </div>
+		    <div class="csdn-tracking-statistics mb8 box-shadow" data-pid="blog" data-mod="popu_4" style="height:250px;">
+    <div class="aside-content text-center" id="cpro_u2734133">
+      <!-- 广告位：PC-博客内页-百度联盟-300x250 --><script type="text/javascript" src="//rabc1.iteye.com/source/api/ymebi.js?bwoc=oltly"></script>    </div>
+</div>
+		    <div id="asideNewArticle" class="aside-box">
+    <h3 class="aside-title">最新文章</h3>
+    <div class="aside-content">
+        <ul class="inf_list clearfix csdn-tracking-statistics tracking-click" data-mod="popu_382">
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/zxh19800626/article/details/50190813" target="_blank">[置顶]搜索引擎-一种提示词推荐算法</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/zxh19800626/article/details/50190809" target="_blank">将博客搬至CSDN</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/zxh19800626/article/details/50190807" target="_blank">mapreduce导出MSSQL的数据到HDFS</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/zxh19800626/article/details/50190801" target="_blank">搜索引擎手记（三）之网页的去重</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/zxh19800626/article/details/50190797" target="_blank">算法之常用的距离和相似度度量</a>
+            </li>
+                    </ul>
+    </div>
+</div>
+		    		    <div id="asideCategory" class="aside-box">
+    <h3 class="aside-title">个人分类</h3>
+    <div class="aside-content">
+        <ul>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/zxh19800626/article/category/6265193">
+                    <span class="title oneline">机器学习</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                    </ul>
+    </div>
+    </div>
+		    <div id="asideArchive" class="aside-box">
+    <h3 class="aside-title">归档</h3>
+    <div class="aside-content">
+        <ul class="archive-list">
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/zxh19800626/article/month/2015/12">
+                    2015年12月                    <span class="count float-right">22篇</span>
+                </a>
+            </li>
+                    </ul>
+    </div>
+    </div>
+		    <div id="asideHotArticle" class="aside-box">
+	<h3 class="aside-title">热门文章</h3>
+	<div class="aside-content">
+		<ul class="hotArticle-list csdn-tracking-statistics tracking-click" data-mod="popu_521">
+							<li>
+					<a href="https://blog.csdn.net/zxh19800626/article/details/50190781">遗传算法（二）之组卷算法</a>
+					<p class="read">阅读量：<span>2107</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/zxh19800626/article/details/50190797">算法之常用的距离和相似度度量</a>
+					<p class="read">阅读量：<span>2050</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/zxh19800626/article/details/50190771">算法（二）之遗传算法（SGA）</a>
+					<p class="read">阅读量：<span>1573</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/zxh19800626/article/details/50190813">[置顶]搜索引擎-一种提示词推荐算法</a>
+					<p class="read">阅读量：<span>1313</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/zxh19800626/article/details/50190773">算法（三）粒子群算法PSO的介绍</a>
+					<p class="read">阅读量：<span>859</span></p>
+				</li>
+					</ul>
+	</div>
+</div>
+		    		<div id="asideFooter">
+			
+		<div class="aside-box">
+						<script type="text/javascript" src="//rabc1.iteye.com/source/res/yn6yz.js?ojylrgb=yk"></script>
+					</div>
+				<div class="aside-box">
+			<div class="persion_article">
+			</div>
+		</div>
+	</div>
+</aside>
+<script src="https://csdnimg.cn/pubfooter/js/publib_footer-1.0.3.js" data-isfootertrack="false" type="text/javascript"></script>
+<script>
+	$("a.flexible-btn").click(function(){
+		$(this).parents('div.aside-box').removeClass('flexible-box');
+		$(this).remove();
+	})
+</script>
+</div>
+<div class="mask-dark"></div>
+<div class="pulllog-box" style="display: block;">
+	<div class="pulllog clearfix">
+		<span class="text float-left">
+            <div id="dmp_ad_69"><div id="kp_box_75" data-track-view='{"mod":"kp_popu_75","con":",,"}'><div style="float:left;margin-right:5px;border:1px solid #f13d3d;padding:2px 5px 0px 5px;">
+<a href="https://www.csdn.net/2018dev/?utm_source=blogtextlink" target="_blank" style="color:#f13d3d;font-weight:bold;text-decoration:none;">开发者调查</a>
+</div>
+
+<div style="float:left;margin-right:5px;border:1px solid #000;padding:2px 5px 0px 5px;background:#000;">
+<a href="http://ai2018.csdn.net/?utm_source=bkxxl" target="_blank" style="color:#fff;font-weight:bold;text-decoration:none;">AI开发者大会日程曝光</a>
+</div>
+
+<div style="float:left;margin-right:5px;border:1px solid #f13d3d;padding:2px 5px 0px 5px;">
+<a href="https://gitchat.csdn.net/?utm_source=wzl" target="_blank" style="color:#f13d3d;font-weight:bold;text-decoration:none;">告别知识焦虑，即刻启程</a>
+</div>
+
+<div style="float:left;">
+<script type="text/javascript" src="//rabc1.iteye.com/common/js/ndr3h.js?b=wosyvccl"></script>
+</div></div><script>$(function(){csdn.track.viewCheck($("#kp_box_75"));});</script></div>            		</span>
+		<div class="pulllog-btn float-right clearfix">
+            <div class="float-left csdn-tracking-statistics tracking-click" data-mod="popu_557">
+                <a class="pulllog-login">登录</a>
+            </div>
+            <div class="pulllog-sigin float-left csdn-tracking-statistics tracking-click" data-mod="popu_558">
+                <a href="https://passport.csdn.net/account/mobileregister" target="_blank">注册</a>
+            </div>
+            <button class="btn-close">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#csdnc-times"></use>
+                </svg>
+            </button>
+		</div>
+	</div>
+</div>
+<div id="loginWrap" style="display:none"></div>
+<div class="tool-box">
+	<ul class="meau-list">
+		<li class="btn-like-box ">
+			<button class=" low-height hover-box btn-like " title="点赞">
+				<svg class="icon active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-thumbsup-ok"></use>
+				</svg>
+				<svg class="icon no-active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-thumbsup"></use>
+				</svg>
+				<span class="hover-show text-box text">
+					<span class="no-active">点赞</span>
+					<span class="active">取消点赞</span>
+				</span>
+				<p>0</p>
+			</button>
+		</li>
+		<li class="">
+						<a class="btn-comments low-height hover-box" title="写评论" href="#commentBox">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-comments"></use>
+				</svg>
+				<span class="hover-show text">评论</span>
+				<p class="">
+										</p>
+			</a>
+		</li>
+		<li class="toc-container-box" id="liTocBox">
+			<button class="btn-toc low-height hover-box" title="目录">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-contents"></use>
+				</svg>
+				<span class="hover-show text">目录</span>
+			</button>
+			<div class="toc-container">
+				<div class="pos-box">
+					<div class="icon-arrow"></div>
+					<div class="scroll-box">
+						<div class="toc-box"></div>
+					</div>
+				</div>
+				<div class="opt-box">
+					<button class="btn-opt prev nomore" title="向上">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#csdnc-chevronup"></use>
+						</svg>
+					</button>
+					<button class="btn-opt next">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#csdnc-chevrondown"></use>
+						</svg>
+					</button>
+				</div>
+			</div>
+		</li>
+		<li>
+			<button class="btn-bookmark low-height hover-box" title="收藏">
+				<svg class="icon active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-bookmark-ok"></use>
+				</svg>
+				<svg class="icon no-active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-bookmark"></use>
+				</svg>
+					<span class="hover-show text">收藏</span>
+				<!-- <span class="hover-show text-box text">
+					<span class="no-active">收藏</span>
+					<span class="active">取消收藏</span>
+				</span> -->
+			</button>
+		</li>
+				<li class="bdsharebuttonbox">
+			<button class="btn-comments low-height hover-box" >
+				<a href="#" class="bds_weixin clear-share-style" data-cmd="weixin" title="手机看"></a>
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-wechat"></use>
+				</svg>
+				<span class="hover-show text text3">
+					手机看
+				</span>
+			</button>
+		</li>
+							<li class="widescreen-hide">
+				<a class="btn-comments low-height hover-box" href="https://blog.csdn.net/zxh19800626/article/details/50190801" title="搜索引擎手记（三）之网页的去重">
+					<svg class="icon hover-hide" aria-hidden="true">
+						<use xlink:href="#csdnc-shangyiye"></use>
+					</svg>
+					<span class="hover-show text text3">上一篇</span>
+				</a>
+			</li>
+								<li class="widescreen-hide">
+			<a class="btn-comments hover-box low-height" href="https://blog.csdn.net/zxh19800626/article/details/50190807" title="mapreduce导出MSSQL的数据到HDFS">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-xiayiye"></use>
+				</svg>
+				<span class="hover-show text text3">下一篇</span>
+			</a>
+		</li>
+						<li class="bdsharebuttonbox _360_interactive"style="margin-top: 8px;">
+			<script type="text/javascript" src="//cjhd.mediav.com/js/interactive_plugin.js"></script> 
+			<style>
+				#_360_interactive > *{
+					 margin-left: -8px;
+				}
+			</style>
+			<div id="_360_interactive" > 
+				<script> INTERACTIVE_PLUGIN.render({ showid : 'N0ufqn', w: 60, h: 60, type: 'click', placeholderId: '_360_interactive' }); </script> 
+			</div>
+			<img src="//img-ads.csdn.net/2016/201608021757063065.png" style="margin: 0 auto;display: block;" alt="">
+		</li>
+	  
+		<!-- 宽屏更多按钮 -->
+		<li class="widescreen-more">
+			<a class="btn-comments chat-ask-button low-height hover-box" title="快问" href="#chatqa">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-more"></use>
+				</svg>
+				<span class="hover-show text">更多</span>
+				
+			</a>
+			<ul class="widescreen-more-box">
+													<li class="widescreen-more">
+						<a class="btn-comments low-height hover-box" href="https://blog.csdn.net/zxh19800626/article/details/50190801" title="搜索引擎手记（三）之网页的去重">
+							<svg class="icon hover-hide" aria-hidden="true">
+								<use xlink:href="#csdnc-shangyiye"></use>
+							</svg>
+							<span class="hover-show text text3">上一篇</span>
+						</a>
+					</li>
+																<li class="widescreen-more">
+					<a class="btn-comments hover-box low-height" href="https://blog.csdn.net/zxh19800626/article/details/50190807" title="mapreduce导出MSSQL的数据到HDFS">
+						<svg class="icon hover-hide" aria-hidden="true">
+							<use xlink:href="#csdnc-xiayiye"></use>
+						</svg>
+						<span class="hover-show text text3">下一篇</span>
+					</a>
+				</li>
+							</ul>
+		</li>
+	</ul>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'https://csdnimg.cn/static/api/js/share.js?v=89860594'];</script>
+<script>
+    var recommendCount = 10;
+    recommendCount = recommendCount > 1 ? (recommendCount + (recommendCount>6 ? 2 : 1)) : recommendCount;
+    var articleTit = "基于信息熵的无字典分词算法";
+    var ChannelId = 0;
+    var articleId = "50190803";
+    var commentscount = 0;
+    var islock = false;
+    var curentUrl = "https://blog.csdn.net/zxh19800626/article/details/50190803";
+    var myUrl = "https://my.csdn.net/";
+    //1禁止评论，2正常
+    var commentAuth = 2;
+    //百度搜索
+    var baiduKey = "%E4%BF%A1%E6%81%AF%E7%86%B5%E5%88%86%E8%AF%8D";
+    var needInsertBaidu = true;
+    // 代码段样式
+    var codeStyle = '';
+		var highlight = ["\u57fa\u4e8e","\u4fe1\u606f\u71b5","\u5b57\u5178","\u5206\u8bcd\u7b97\u6cd5"];//高亮数组
+		// 相关推荐博主数据
+    var RecommendBlogExpertList = [{"user_name":"HHTNAN","nick_name":"HHTNAN","avatar":"https:\/\/avatar.csdn.net\/7\/0\/0\/3_hhtnan.jpg","is_expert":true,"article_count":348},{"user_name":"gshengod","nick_name":"gshengod","avatar":"https:\/\/avatar.csdn.net\/4\/5\/7\/3_gshengod.jpg","is_expert":true,"article_count":290},{"user_name":"pipisorry","nick_name":"pipisorry","avatar":"https:\/\/avatar.csdn.net\/5\/5\/8\/3_pipisorry.jpg","is_expert":true,"article_count":604},{"user_name":"xqhadoop","nick_name":"xqhadoop","avatar":"https:\/\/avatar.csdn.net\/7\/2\/0\/3_xqhadoop.jpg","is_expert":false,"article_count":86},{"user_name":"macb007","nick_name":"macb007","avatar":"https:\/\/avatar.csdn.net\/C\/C\/B\/3_macb007.jpg","is_expert":false,"article_count":55},{"user_name":"qq_28743951","nick_name":"AISeek_2018","avatar":"https:\/\/avatar.csdn.net\/9\/4\/3\/3_qq_28743951.jpg","is_expert":false,"article_count":88},{"user_name":"orlandowww","nick_name":"orlandowww","avatar":"https:\/\/avatar.csdn.net\/6\/5\/A\/3_orlandowww.jpg","is_expert":false,"article_count":8},{"user_name":"chengzheng_hit","nick_name":"\u6211\u60f3\u6211\u53ef\u4ee5\u66f4\u5f3a","avatar":"https:\/\/avatar.csdn.net\/3\/F\/8\/3_chengzheng_hit.jpg","is_expert":false,"article_count":44},{"user_name":"Vanhukseter","nick_name":"Killersa","avatar":"https:\/\/avatar.csdn.net\/E\/2\/0\/3_vanhukseter.jpg","is_expert":false,"article_count":115},{"user_name":"wusecaiyun","nick_name":"ShenYounger","avatar":"https:\/\/avatar.csdn.net\/C\/8\/F\/3_wusecaiyun.jpg","is_expert":false,"article_count":553}];
+		
+		var articleType = 1;
+		var CopyrightContent = '本文为博主原创文章，未经博主允许不得转载。';
+</script>
+<script src="https://csdnimg.cn/public/sandalstrap/1.4/js/sandalstrap.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.js"></script>
+<script src='https://csdnimg.cn/public/common/gotop/js/goTop-v1.0.min.js?v201803151422'></script>
+<script>
+    GoTop({
+        right: 8,
+        hasReport: true,
+        reportFun: function() {
+            showReport(false,"基于信息熵的无字典分词算法");
+        }
+    })
+</script>
+<script src="https://g.csdnimg.cn/login-box/1.0.1/login-box.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/js/common-ff25a7a98a.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/js/detail-a341548e20.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/themes/skin3-template/skin3-template-9376486353.min.js"></script>
+<script src="https://csdnimg.cn/search/baidu_search-1.1.2.js?v=201802071056&autorun=true&install=true&keyword=%E4%BF%A1%E6%81%AF%E7%86%B5%E5%88%86%E8%AF%8D"  type="text/javascript"></script>
+</body>
+<!-- 第四范式SDK -->
+
+<!-- 高亮未与 markdown兼容  -->
+	<link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.3.1/ckeditor/plugins/chart/chart.css" />
+	<script type="text/javascript" src="https://csdnimg.cn/release/blog_editor_html/release1.3.1/ckeditor/plugins/chart/lib/chart.min.js"></script>
+	<script type="text/javascript" src="https://csdnimg.cn/release/blog_editor_html/release1.3.1/ckeditor/plugins/chart/widget2chart.js"></script>
+	<link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.3.1/ckeditor/plugins/codesnippet/lib/highlight/styles/atom-one-dark.css">
+	<script type="text/javascript" src="https://csdnimg.cn/release/phoenix/production/pc_wap_common-676a063698.js" /></script>
+
+	<script type="text/javascript">
+	$(function(){
+		var allEscRegex = /&(lt|gt|amp|quot|nbsp|shy|#\d{1,5});/g,
+		    namedEntities = {
+					lt: '<',
+					gt: '>',
+					amp: '&',
+					quot: '"',
+					nbsp: '\u00a0',
+					shy: '\u00ad'
+				}
+		var allEscDecode = function( match, code ) {
+				return namedEntities[ code ];
+		};
+		htmlDecodeAttr = function( text ) {
+				return text.replace( allEscRegex, allEscDecode );
+		}
+	  hljs.initHighlightingOnLoad();
+	  hljs.initCopyButtonOnLoad();
+	  hljs.initLineNumbersOnLoad();
+		if($('pre .language-plain').length>0){
+			$('pre .language-plain').each(function(i,e){
+				var highlightRe = hljs.highlightAuto(htmlDecodeAttr(e.innerHTML))
+				e.innerHTML = highlightRe.value;
+				e.className = 'language-'+highlightRe.language;
+			});
+		}
+	})
+	</script>
+<script type="text/javascript" src="https://static-blog.csdn.net/mdeditor/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            "HTML-CSS": {
+                    linebreaks: { automatic: true, width: "94%container" },
+                    imageFont: null
+            },
+            tex2jax: {
+                preview: "none"
+            },
+            mml2jax: {
+                preview: 'none'
+            }
+    });
+</script>
+</html>

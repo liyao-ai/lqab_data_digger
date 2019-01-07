@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="canonical" href="https://blog.csdn.net/shuihupo/article/details/81436633"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="referrer" content="always">
+    <meta name="description" content="结巴
+
+
+
+结巴
+
+JIEBA项目github地址
+
+
+
+训练数据
+
+
+
+载入词典
+
+开发者可以指定自己自定义的词典，以便包含 jieba 词库里没有的词。虽然 jieba 有新词识别能力，但是自行添加新词可以保证更高的正确率 
+用法： jieba.load_userdict(file_name) # file_name 为文件类对象或自定义词典的路径 
+词典格式和 dict.txt 一样，一个词..." />
+    <meta name="keywords" content="" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+    <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848">
+    <script src="https://csdnimg.cn/release/phoenix/vendor/tingyun/tingyun-rum-blog.js"></script>
+
+    <link href="https://csdnimg.cn/public/favicon.ico" rel="SHORTCUT ICON">
+    <title>分词工具  结巴个人词典构造 - shuihupo的博客 - CSDN博客</title>
+
+            <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/detail-58370ed92c.min.css">
+        <link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/themes/skin-sea/skin-sea-ef6fbc37e7.min.css">
+
+    <script type="text/javascript">
+        var username = "shuihupo";
+        var blog_address = "https://blog.csdn.net/shuihupo";
+        var static_host = "https://csdnimg.cn/release/phoenix/";
+        var currentUserName = "";
+        var isShowAds = true;
+        var isOwner = false;
+        var loginUrl = "http://passport.csdn.net/account/login?from=https://blog.csdn.net/shuihupo/article/details/81436633"
+        var blogUrl = "https://blog.csdn.net/";
+        //页面皮肤样式
+        var curSkin = "skin-sea";
+        // 第四范式所需数据
+        var articleTitles = "分词工具  结巴个人词典构造 - shuihupo的博客";
+        var articleID = "81436633";
+
+        var nickName = "shuihupo";
+    </script>
+    <script type="text/javascript">
+        // Traffic Stats of the entire Web site By baidu
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?6bcd52f51e9b3dce32bec4a3997715ac";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+        // Traffic Stats of the entire Web site By baidu end
+    </script>
+    <script src="https://csdnimg.cn/public/common/libs/jquery/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="https://csdnimg.cn/rabbit/exposure-click/main-1.0.6.js"></script>
+    <!-- 新版上报 -->
+    <script src="//g.csdnimg.cn/track/1.1.1/track.js" type="text/javascript"></script>
+    <!-- 新版上报end -->
+            <link rel="stylesheet" href="https://csdnimg.cn/public/sandalstrap/1.4/css/sandalstrap.min.css">
+    <style>
+        .MathJax, .MathJax_Message, .MathJax_Preview{
+            display: none
+        }
+    </style>
+</head>
+<!-- nodata 第三栏接口无数据时样式不变 -->
+<body class="nodata"> 
+    <link rel="stylesheet" href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+    <script id="toolbar-tpl-scriptId" src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript" domain="https://blog.csdn.net/"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.css">
+<script type="text/javascript" src="//static.mediav.com/js/mvf_news_feed.js"></script>
+<script type="text/javascript" src="//g.csdnimg.cn/copyright/1.0.3/copyright.js"></script>
+<div style="display:none;">
+	<img src="" onerror='setTimeout(function(){if(!/(csdn.net|iteye.com|baiducontent.com|googleusercontent.com|360webcache.com|sogoucdn.com|bingj.com|baidu.com)$/.test(window.location.hostname)){window.location.href="\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x63\x73\x64\x6e\x2e\x6e\x65\x74"}},3000);'>
+</div>
+<link rel="stylesheet" href="https://csdnimg.cn/release/phoenix/template/css/chart-3456820cac.css" />
+
+
+
+<script src="https://dup.baidustatic.com/js/ds.js"></script>
+<div class="container clearfix" id="mainBox">
+		<!-- <div id="breadcrumbs">
+			<span><a href="https://blog.csdn.net/">博客首页</a></span>
+			<i>></i>
+			<span><a href="https://blog.csdn.net/shuihupo">shuihupo的博客...</a></span>
+			<i>></i>
+			<span>分词工具  结巴个人词典构造</span>
+		</div> -->
+		<div class="recommend-right">
+  <ul class="recommend-fixed-box">
+    
+  </ul>
+</div>
+    <main>
+        <div class="blog-content-box">
+	<div class="article-header-box">
+		<div class="article-header">
+			<div class="article-title-box">
+				<span class="article-type type-1 float-left">原</span>				<h1 class="title-article">分词工具  结巴个人词典构造</h1>
+			</div>
+			<div class="article-info-box">
+				<div class="article-bar-top">
+																				<span class="time">2018年08月05日 22:40:19</span>
+					<a class="follow-nickName" href="https://me.csdn.net/shuihupo" target="_blank">shuihupo</a>
+						<span class="read-count">阅读数：133</span>
+						
+																					<div class="tags-box space">
+								<span class="label">个人分类：</span>
+																<a class="tag-link" href="https://blog.csdn.net/shuihupo/article/category/7468986"  target="_blank">日常学习小点																<a class="tag-link" href="https://blog.csdn.net/shuihupo/article/category/7729915"  target="_blank">python模块																<a class="tag-link" href="https://blog.csdn.net/shuihupo/article/category/7524980"  target="_blank">python自然语言																</a>
+							</div>
+																								</div>
+				<div class="operating">
+														</div>
+			</div>
+		</div>
+	</div>
+	<article>
+		<div id="article_content" class="article_content clearfix csdn-tracking-statistics" data-pid="blog"  data-mod=popu_307  data-dsm = "post" >
+								<div class="article-copyright">
+					版权声明：欢迎分享和转载，请注明出处 shuihupo：https://blog.csdn.net/shuihupo.同时,本博客部分会在云南省高校数据化运营管理工程中心博客同步。欢迎沟通交流：linyimeng1001@foxmail.com					https://blog.csdn.net/shuihupo/article/details/81436633				</div>
+								            <div class="markdown_views prism-tomorrow-night-eighties">
+							<!-- flowchart 箭头图标 勿删 -->
+							<svg xmlns="http://www.w3.org/2000/svg" style="display: none;"><path stroke-linecap="round" d="M5,0 0,2.5 5,5z" id="raphael-marker-block" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path></svg>
+							<p>结巴</p>
+
+
+
+<h1 id="结巴">结巴</h1>
+
+<p><a href="https://github.com/fxsjy/jieba" rel="nofollow">JIEBA项目github地址</a></p>
+
+
+
+<h3 id="训练数据">训练数据</h3>
+
+
+
+<h4 id="载入词典">载入词典</h4>
+
+<p>开发者可以指定自己自定义的词典，以便包含 jieba 词库里没有的词。虽然 jieba 有新词识别能力，但是自行添加新词可以保证更高的正确率 <br>
+用法： jieba.load_userdict(file_name) # file_name 为文件类对象或自定义词典的路径 <br>
+词典格式和 dict.txt 一样，一个词占一行；每一行分三部分：词语、词频（可省略）、词性（可省略），用空格隔开，顺序不可颠倒。file_name 若为路径或二进制方式打开的文件，则文件必须为 UTF-8 编码。 <br>
+词频省略时使用自动计算的能保证分出该词的词频。 <br>
+例如：</p>
+
+<p>创新办 3 i <br>
+云计算 5 <br>
+凱特琳 nz <br>
+台中</p>
+
+
+
+<h3 id="调整词典">调整词典</h3>
+
+<p>使用 add_word(word, freq=None, tag=None) 和 del_word(word) 可在程序中动态修改词典。</p>
+
+<p>使用 suggest_freq(segment, tune=True) 可调节单个词语的词频，使其能（或不能）被分出来。</p>
+
+<p>注意：自动计算的词频在使用 HMM 新词发现功能时可能无效。</p>
+
+<p>代码示例：</p>
+
+<blockquote>
+  <blockquote>
+    <blockquote>
+      <p>print(‘/’.join(jieba.cut(‘如果放到post中将出错。’, HMM=False))) <br>
+      如果/放到/post/中将/出错/。 <br>
+      jieba.suggest_freq((‘中’, ‘将’), True) <br>
+      494 <br>
+      print(‘/’.join(jieba.cut(‘如果放到post中将出错。’, HMM=False))) <br>
+      如果/放到/post/中/将/出错/。 <br>
+      print(‘/’.join(jieba.cut(‘「台中」正确应该不会被切开’, HMM=False))) <br>
+      「/台/中/」/正确/应该/不会/被/切开 <br>
+      jieba.suggest_freq(‘台中’, True) <br>
+      69 <br>
+      print(‘/’.join(jieba.cut(‘「台中」正确应该不会被切开’, HMM=False))) <br>
+      「/台中/」/正确/应该/不会/被/切开 <br>
+      “通过用户自定义词典来增强歧义纠错能力” — <a href="https://github.com/fxsjy/jieba/issues/14" rel="nofollow">https://github.com/fxsjy/jieba/issues/14</a></p>
+    </blockquote>
+  </blockquote>
+</blockquote>
+
+
+
+<h6 id="通过用户自定义词典来增强歧义纠错能力-链接精华内容">通过用户自定义词典来增强歧义纠错能力 链接精华内容</h6>
+
+
+
+<h6 id="1-自定义词典的词频设置问题">1 自定义词典的词频设置问题</h6>
+
+<pre class="prettyprint"><code class=" hljs mathematica">RE:
+
+<span class="hljs-string">"大连美容美发学校中君意是你值得信赖的选择"</span> 这句话首先会按照概率连乘最大路径来切割，因为单字有一定概率，而“中君意是”这四个字中不含词典中有的词，所以会被切割成单字：
+
+即：大连/ 美容美发/ 学校/ 中/ 君/ 意/ 是/ 你/ 值得/ 信赖/ 的/ 选择/
+
+然后我们认为“中/ 君/ 意/ 是/ 你/ ”这几个连续的单字 中可能有词典中没有的新词，所以再用finalseg来切一遍“中君意是你 ”，finalseg是通过HMM模型来做的，简单来说就是给单字大上B,M,<span class="hljs-keyword">E</span>,S四种标签以使得概率最大。
+
+很遗憾，由于训练数据的问题，finalseg最终得到的标签是：
+
+中君 意是 你
+B <span class="hljs-keyword">E</span> B <span class="hljs-keyword">E</span> S
+
+即认为P(B)_P(中|B)_P(<span class="hljs-keyword">E</span>|B)_P(君|<span class="hljs-keyword">E</span>)_P(B|<span class="hljs-keyword">E</span>)_P(意|B)_P(<span class="hljs-keyword">E</span>|B)_P(是|<span class="hljs-keyword">E</span>)_P(S|<span class="hljs-keyword">E</span>)*P(你|S) 是所有可能的标签组合中概率最大的。
+
+B: 开头
+<span class="hljs-keyword">E</span>:结尾
+M:中间
+S: 独立成词的单字
+
+解决方案是在词典中补充“君意”这个词，并给予一个词频，不用太大，比如<span class="hljs-number">3</span>即可。
+
+==user.dict===
+
+君意 <span class="hljs-number">3</span>
+
+==test.py==</code></pre>
+
+
+
+<h6 id="注意对于新词不用太大比如3即可">注意：对于新词不用太大，比如3即可。</h6>
+
+<h6 id="当然这个词频是针对词典没有的词对于下面的例子设置了20000的词频是因为">当然这个词频是针对词典没有的词，对于下面的例子，设置了20000的词频，是因为</h6>
+
+<blockquote>
+  <p>频率越高，成词的概率就越大。比如”江州市长江大桥”，既可以是”江州/市长/江大桥“，也可以是”江州/市/长江大桥“。 <br>
+  假设要保证第一种划分的话，我们需要保证P(江州)_P(市长)_P(江大桥）&gt; P(江州)_P(市)_P(长江大桥)因为”长江大桥“、”市长“这些词的频率都很高，为了纠正，才把”江大桥“的词频设置的很高。而对于一般的词典中没有的新词，大多数情况下不会处于有歧义的语境中，故词频也就2,3,4就够了。</p>
+</blockquote>
+
+<p>比如”江州市长江大桥”，既可以是”江州/市长/江大桥“，也可以是”江州/市/长江大桥“。 <br>
+假设要保证第一种划分的话，我们需要保证P(江州)_P(市长)_P(江大桥）&gt; P(江州)_P(市)_P(长江大桥)</p>
+
+<pre class="prettyprint"><code class=" hljs python"><span class="hljs-string">'江州/ 市/ 长江大桥/ 参加/ 了/ 长江大桥/ 的/ 通车/ 仪式'</span>
+
+目前这个方面的确还比较弱。
+
+通过在自定义词典里提高“江大桥”的词频可以做到，但是设置多少还没有公式，词频越高则成词概率越大，不宜过大。
+
+我是这样设置的：
+
+==user.dict==
+
+江大桥 <span class="hljs-number">20000</span>
+
+===test1.py======
+
+<span class="hljs-comment">#encoding=utf-8</span>
+<span class="hljs-keyword">import</span> sys
+sys.path.append(<span class="hljs-string">"../"</span>)
+<span class="hljs-keyword">import</span> jieba
+jieba.load_userdict(<span class="hljs-string">"user.dict"</span>)
+<span class="hljs-keyword">print</span> <span class="hljs-string">", "</span>.join(jieba.cut(<span class="hljs-string">"江州市长江大桥参加了长江大桥的通车仪式"</span>))
+
+==结果===
+江州, 市长, 江大桥, 参加, 了, 长江大桥, 的, 通车, 仪式</code></pre>
+
+
+
+<h6 id="2要注意-看来dicttxt里面的词频只是为解决歧义而设置的词典中的词频数值跟计算tf-idf时没有没有必然联系">2要注意 看来dict.txt里面的词频只是为解决歧义而设置的，词典中的词频数值跟计算tf-idf时没有没有必然联系</h6>
+
+<pre class="prettyprint"><code class=" hljs tex">问题一：新词
+我想问，我在使用自定义词典的时候，分词“藏宝阁太贵”，我成功把“藏宝阁”分成一起了，但是“太贵”却不能分成“太”和“贵”。
+我尝试过将jieba的字典dict.txt中的“太贵”直接删掉，也尝试过加入语句jieba.suggest_freq(('太','贵'),True)，也都没有用。
+请问，怎么才能成功把“太贵”分开
+
+个人认为有两种方式：1）你可以在字典dict.txt中先找出“太贵”的词频，然后在后面加上“太” ，“贵”，但是词频要比“太贵”高；
+2）添加自定义字典，字典里写上“太” ，“贵”，分别加词频，词频设置跟前面的方法一样
+
+问题二：歧义（默认词典有的，自定义词典但还是有问题，怎么办）
+ 您好，最近使用您的工具发现 “常用的数据挖掘方法包括向量机等”这句话被分成了
+常用 <span class="hljs-command">\ </span>的 <span class="hljs-command">\ </span>数据挖掘 <span class="hljs-command">\ </span>方法 <span class="hljs-command">\ </span>包括 <span class="hljs-command">\ </span>向量 <span class="hljs-command">\ </span>机 <span class="hljs-command">\ </span>等
+于是自己加了词典，写的是 向量机 5 n
+结果分词变成了
+常用 <span class="hljs-command">\ </span>的 <span class="hljs-command">\ </span>数据 <span class="hljs-command">\ </span>挖掘 <span class="hljs-command">\ </span>方法 <span class="hljs-command">\ </span>包括 <span class="hljs-command">\ </span>向 <span class="hljs-command">\ </span>量机 <span class="hljs-command">\ </span>等
+数据挖掘这个词也分错了，另外向量机也没分出来
+
+我后来发现问题是jieba在分词时只能引用一个词典，我导入了自己的词典后jieba分词就没有使用原来的词典，之所以还能分词是因为HMM处在开启状态。
+我后来直接把发现的新词加入到原词典里就没问题了。
+另外我发现如果不写词频的话会报ValueError: invalid dictionary entry这样一个bug，似乎是字典格式要求必须有词频才可以，我试了一下，可以没有词性但必须要有词频才能不报错。
+
+我想把“二手手机” 分为“二手” 和 “手机”，自定义词典后， 我用load_userdict 没有任何作用，但是用set_dictionary 就能分开了。。。
+</code></pre>
+
+<h3 id="词性标注">词性标注</h3>
+
+<p>jieba.posseg.POSTokenizer(tokenizer=None) 新建自定义分词器，tokenizer 参数可指定内部使用的 jieba.Tokenizer 分词器。jieba.posseg.dt 为默认词性标注分词器。 <br>
+标注句子分词后每个词的词性，采用和 ictclas 兼容的标记法。 <br>
+用法示例</p>
+
+<blockquote>
+  <blockquote>
+    <blockquote>
+      <p>import jieba.posseg as pseg <br>
+      words = pseg.cut(“我爱北京天安门”) <br>
+      for word, flag in words: <br>
+      …    print(‘%s %s’ % (word, flag)) <br>
+      … <br>
+      我 r <br>
+      爱 v <br>
+      北京 ns <br>
+      天安门 ns</p>
+    </blockquote>
+  </blockquote>
+</blockquote>            </div>
+						<link href="https://csdnimg.cn/release/phoenix/mdeditor/markdown_views-f77b6af6fd.css" rel="stylesheet">
+                </div>
+									<div class="hide-article-box text-center">
+						<a class="btn" id="btn-readmore" data-track-view='{"mod":"popu_376","con":",https://blog.csdn.net/shuihupo/article/details/81436633,"}' data-track-click='{"mod":"popu_376","con":",https://blog.csdn.net/shuihupo/article/details/81436633,"}'>阅读更多</a>
+					</div>
+					<script>
+						(function(){
+							function setArticleH(btnReadmore,posi){
+								var winH = $(window).height();
+								var articleBox = $("div.article_content");
+								var artH = articleBox.height();
+								if(artH > winH*posi){
+									articleBox.css({
+										'height':winH*posi+'px',
+										'overflow':'hidden'
+									})
+									btnReadmore.click(function(){
+										articleBox.removeAttr("style");
+										$(this).parent().remove();
+									})
+								}else{
+									btnReadmore.parent().remove();
+								}
+							}
+							var btnReadmore = $("#btn-readmore");
+							if(btnReadmore.length>0){
+								if(currentUserName){
+									setArticleH(btnReadmore,3);
+								}else{
+									setArticleH(btnReadmore,1.2);
+								}
+							}
+						})()
+					</script>
+					</article>
+	
+</div>
+<script>
+		$(".MathJax").remove();
+		if($('div.markdown_views pre.prettyprint code.hljs').length > 0 ){
+				$('div.markdown_views')[0].className = 'markdown_views';
+		}
+</script>
+        <div class="p4course_target" ></div><script>window.p4sdk_enable_courseBox=true</script>        <a id="commentBox"></a>
+<div class="comment-box">
+	  	<div class="unlogin-box text-center">
+		想对作者说点什么？
+		<!-- $curl 当前地址 -->
+		<button id="btnCommentUnlogin" class="btn btn-sm btn-red">我来说一句</button>
+	</div>
+			<div class="comment-list-container">
+		<a id="comments"></a>
+		<div class="comment-list-box">
+		</div>
+		<div id="commentPage" class="pagination-box d-none"></div>
+		<div class="opt-box text-center">
+			<button class="btn btn-sm btn-link-blue" id="btnMoreComment"></button>
+		</div>
+	</div>
+</div>
+        <div class="recommend-box">
+            		<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/wangpei1949/article/details/57413419,BlogCommendFromBaidu_0"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/wangpei1949/article/details/57413419,BlogCommendFromBaidu_0"}'>
+		<a href="https://blog.csdn.net/wangpei1949/article/details/57413419" target="_blank" title="jieba 结巴分词 常用说明">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						jieba <em>结巴</em><em>分词</em> 常用说明				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/0/4/5/3_wangpei1949.jpg" alt="wangpei1949" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">wangpei1949</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">02-26</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							1.8万</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							安装
+  
+  
+  全自动：easy_install jieba 或者 pip install jieba 或者pip3 install jieba
+  手　动：jieba 目录放置于当前目录或者 ...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/dove_zq/article/details/80596214,BlogCommendFromBaidu_1"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/dove_zq/article/details/80596214,BlogCommendFromBaidu_1"}'>
+		<a href="https://blog.csdn.net/dove_zq/article/details/80596214" target="_blank" title="推荐一个用过的最方便且最简洁的词典：欧路词典">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						推荐一个用过的最方便且最简洁的<em>词典</em>：欧路<em>词典</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/2/A/9/3_dove_zq.jpg" alt="dove_zq" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">dove_zq</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">06-06</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							9112</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							首先欧路词典跨平台且兼容离线词典模式附上官网地址：http://www.eudic.net/eudic/android.aspx主要有N个推荐理由：1，界面优雅：欧路词典界面优美简洁而不单调，操作人性...					</p>
+			</div>
+					</a>
+	</div>
+									<!-- 第四范式广告开关 -->
+				<div class="p4courset3_target _4paradigm_box recommend-item-box clearfix" ></div>
+				<script>window.p4sdk_enable_recommendBox=true</script>
+			
+						<div class="recommend-item-box recommend-box-ident recommend-download-box clearfix" data-track-view='{"mod":"popu_614","con":",https://download.csdn.net/download/qianlicao412/10478405,BlogCommendFromBaidu_2"}' data-track-click='{"mod":"popu_614","con":",https://download.csdn.net/download/qianlicao412/10478405,BlogCommendFromBaidu_2"}'>
+			<a href="https://download.csdn.net/download/qianlicao412/10478405" target="_blank">
+				<div class="content">
+					<div class="">
+						<span class="type">下载</span>
+						<h4 class="text-truncate oneline clearfix">
+							C#编程<em>词典</em><em>个人</em>版						</h4>
+						<span class="data float-right">06-14</span>
+					</div>
+					<div class="desc oneline">
+							请到这里下载 原版官方安装文件进行复制安装,完成后 使用我提供的破解版替换原版程序即可使用. https://pan.baidu.com/s/16iiEM#list/path=/					</div>
+				</div>
+			</a>
+		</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/ss654271961/article/details/78578511,BlogCommendFromBaidu_3"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/ss654271961/article/details/78578511,BlogCommendFromBaidu_3"}'>
+		<a href="https://blog.csdn.net/ss654271961/article/details/78578511" target="_blank" title="python调用jieba(结巴)分词 加入自定义词典和去停用词功能">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						python调用jieba(<em>结巴</em>)<em>分词</em> 加入自定义<em>词典</em>和去停用词功能				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/0/2/8/3_ss654271961.jpg" alt="ss654271961" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">ss654271961</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-20</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							2090</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							转自https://www.cnblogs.com/zhangtianyuan/p/6875080.html
+    把语料从数据库提取出来以后就要进行分词啦，我是在linux环境下做的，先把jieb...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/robin_Xu_shuai/article/details/53306686,BlogCommendFromBaidu_4"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/robin_Xu_shuai/article/details/53306686,BlogCommendFromBaidu_4"}'>
+		<a href="https://blog.csdn.net/robin_Xu_shuai/article/details/53306686" target="_blank" title="结巴分词使用方法">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						<em>结巴</em><em>分词</em>使用方法				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/0/3/0/3_robin_xu_shuai.jpg" alt="robin_Xu_shuai" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">robin_Xu_shuai</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-23</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							1.3万</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							0.下载
+     结巴分词包下载地址：http://download.csdn.net/detail/robin_xu_shuai/9691188
+1.安装
+
+     将其解压到任意目录下...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/BBZZ2/article/details/72769801,BlogCommendFromBaidu_5"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/BBZZ2/article/details/72769801,BlogCommendFromBaidu_5"}'>
+		<a href="https://blog.csdn.net/BBZZ2/article/details/72769801" target="_blank" title="词典加载及简要分词过程">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						<em>词典</em>加载及简要<em>分词</em>过程				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/3/F/4/3_bbzz2.jpg" alt="BBZZ2" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">BBZZ2</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">05-26</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							844</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							ansj词典加载及简要分词过程 粗略看了点ansj源代码，记录备忘。   词典等配置文件加载类 （以调用 NlpAnalysis 分词类为例）： 1，   MyStaticValue 初始化 NlpA...					</p>
+			</div>
+					</a>
+	</div>
+								<div class="recommend-item-box recommend-ad-box" id="a_d_feed_0"></div>
+			<script>
+				var width = $("div.recommend-box").outerWidth() - 48;
+				NEWS_FEED({
+					w: width,
+					h: 60,
+					showid: 'Afihld',
+					placeholderId: 'a_d_feed_0',
+					inject: 'define',
+					define: {
+						imagePosition: 'left',
+						imageBorderRadius: 0,
+						imageWidth: 90,
+						imageHeight: 60,
+						imageFill: 'clip',
+						displayImage: true,
+						displayTitle: true,
+						titleFontSize: 20,
+						titleFontColor: '#333',
+						titleFontFamily: 'Microsoft Yahei',
+						titleFontWeight: 'bold',
+						titlePaddingTop: 0,
+						titlePaddingRight: 0,
+						titlePaddingBottom: 10,
+						titlePaddingLeft: 8,
+						displayDesc: true,
+						descFontSize: 14,
+						descPaddingLeft: 14,
+						descFontColor: '#6b6b6b',
+						descFontFamily: 'Microsoft Yahei',
+						paddingTop: 0,
+						paddingRight: 0,
+						paddingBottom: 0,
+						paddingLeft: 0,
+						backgroundColor: '#fff',
+						hoverColor: '#ca0c16'
+					}
+				})
+			</script>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/lilongsy/article/details/78183855,BlogCommendFromBaidu_6"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/lilongsy/article/details/78183855,BlogCommendFromBaidu_6"}'>
+		<a href="https://blog.csdn.net/lilongsy/article/details/78183855" target="_blank" title="jieba分词/载入词典/抽取关键词/标注词性">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						jieba<em>分词</em>/载入<em>词典</em>/抽取关键词/标注词性				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/7/7/E/3_lilongsy.jpg" alt="lilongsy" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">lilongsy</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-09</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							2225</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							分词
+jieba.cut 方法接受三个输入参数: 需要分词的字符串；cut_all 参数用来控制是否采用全模式；HMM 参数用来控制是否使用 HMM 模型
+jieba.cut_for_search 方...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/u012052268/article/details/77825981,BlogCommendFromBaidu_7"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/u012052268/article/details/77825981,BlogCommendFromBaidu_7"}'>
+		<a href="https://blog.csdn.net/u012052268/article/details/77825981" target="_blank" title="python结巴分词、jieba加载停用词表">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						python<em>结巴</em><em>分词</em>、jieba加载停用词表				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/3/8/C/3_u012052268.jpg" alt="u012052268" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">u012052268</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">09-03</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							4.6万</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							python结巴分词python结巴分词
+jieba中文分词简介
+中文分词的原理
+1 基于规则
+2 基于统计
+3 jieba的原理
+安装结巴jieba
+jieba三种分词模式以及其应用
+jieba增强...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/huludan/article/details/52729511,BlogCommendFromBaidu_8"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/huludan/article/details/52729511,BlogCommendFromBaidu_8"}'>
+		<a href="https://blog.csdn.net/huludan/article/details/52729511" target="_blank" title="jieba分词增加自定义词表">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						jieba<em>分词</em>增加自定义词表				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/0/B/2/3_huludan.jpg" alt="huludan" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">huludan</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">10-03</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							1.3万</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							在使用jieba分词时经常会发现一些未登录词，因此增加领域词表就变得很重要，下面提供增加几种途径：
+1、领域权威词汇字典
+2、搜狗输入法领域词库、百度输入法领域词库
+3、jieba分词提供的其他词典：...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box recommend-box-ident type_blog clearfix" data-track-view='{"mod":"popu_614","con":",https://blog.csdn.net/wbcg111/article/details/53191721,BlogCommendFromBaidu_9"}' data-track-click='{"mod":"popu_614","con":",https://blog.csdn.net/wbcg111/article/details/53191721,BlogCommendFromBaidu_9"}'>
+		<a href="https://blog.csdn.net/wbcg111/article/details/53191721" target="_blank" title="Java简单使用jieba分词">
+			<div class="content">
+				<h4 class="text-truncate oneline">
+						Java简单使用jieba<em>分词</em>				</h4>
+				<div class="info-box d-flex align-content-center">
+					<p class="avatar">
+							<img src="https://avatar.csdn.net/C/5/C/3_wbcg111.jpg" alt="wbcg111" class="avatar-pic">
+							<span class="namebox">
+								<span class="name">wbcg111</span>
+								<span class="triangle"></span>
+							</span>
+					</p>
+					<p class="date-and-readNum">
+						<span class="date hover-show">11-16</span>
+						<span class="read-num hover-hide">
+							<svg class="icon csdnc-yuedushu" aria-hidden="true">
+								<use xlink:href="#csdnc-yuedushu"></use>
+							</svg>
+							1.3万</span>
+						</p>
+					</div>
+					<p class="content oneline">
+							1.下载jieba分词包： 
+  下载地址：http://download.csdn.net/detail/wbcg111/9685021 
+2.配置，使用分词包
+com.huaban.analysi...					</p>
+			</div>
+					</a>
+	</div>
+						<div class="recommend-item-box type_hot_word">
+									<div class="content clearfix oneline">
+				<h5 class="float-left">相关热词</h5>
+				<div class="float-left">
+									<span>
+						<a href="https://blog.csdn.net/lijiaz5033/article/details/75670305" target="_blank">
+						es分词和不分词</a>
+					</span>
+									<span>
+						<a href="https://blog.csdn.net/flysky1991/article/details/73948971" target="_blank">
+						4分词7分词</a>
+					</span>
+									<span>
+						<a href="https://blog.csdn.net/churximi/article/details/51174317" target="_blank">
+						哈工大分词分词</a>
+					</span>
+									<span>
+						<a href="https://blog.csdn.net/sinat_26917383/article/details/77067515" target="_blank">
+						pyohon分词</a>
+					</span>
+									<span>
+						<a href="https://blog.csdn.net/flyingdog123/article/details/67637783" target="_blank">
+						lunece分词</a>
+					</span>
+								</div>
+			</div>
+					</div>
+		<div class="recommend-item-box blog-expert-recommend-box">
+			<h4 class="text-truncate">博主推荐
+			</h4>
+			<div class="blog-expert-recommend">
+				<div class="blog-expert-load-new" data-index="3">
+					<svg version="1.1" viewBox="0 0 200 200" style="enable-background:new 0 0 200 200;" xml:space="preserve">
+					<path d="M142.5,57.5c-1.3-1.2-2.1-3.3-2.1-5.4c0-4.2,3.3-7.5,7.5-7.5h19.6c4.2,0,7.5,3.3,7.5,7.5s-3.3,7.5-7.5,7.5h-4.2
+					 C170.8,71.2,175,85,175,100c0,41.7-33.8,75-75,75c-4.2,0-7.5-3.3-7.5-7.5c0-4.2,3.3-7.5,7.5-7.5c33.3,0,60-27.1,60-60
+					 C160,83.7,153.8,68.7,142.5,57.5L142.5,57.5z M57.5,142.5c1.2,1.2,2.1,3.3,2.1,5.4c0,4.2-3.3,7.5-7.5,7.5H32.5
+					 c-4.2,0-7.5-3.3-7.5-7.5c0-4.2,3.3-7.5,7.5-7.5h4.2C29.2,128.8,25,115,25,100c0-41.7,33.7-75,75-75c4.2,0,7.5,3.3,7.5,7.5
+					 S104.2,40,100,40c-33.3,0-60,27.1-60,60C40,116.2,46.2,131.2,57.5,142.5z"/>
+					</svg>
+					<span>换一批</span>
+				</div>
+				<div class="blog-expert">
+				</div>
+			</div>
+		</div>
+
+
+            <div class="recommend-loading-box">
+                <img src='https://csdnimg.cn/release/phoenix/images/feedLoading.gif'>
+            </div>
+            <div class="recommend-end-box">
+                <p class="text-center">没有更多推荐了，<a href="https://blog.csdn.net/" class="c-blue c-blue-hover c-blue-focus">返回首页</a></p>
+            </div>
+        </div>
+    </main>
+
+    <aside>
+		    <div id="asideProfile" class="aside-box">
+    <!-- <h3 class="aside-title">个人资料</h3> -->
+    <div class="profile-intro d-flex">
+        <div class="avatar-box d-flex justify-content-center flex-column">
+            <a href="https://blog.csdn.net/shuihupo">
+                <img src="https://avatar.csdn.net/B/8/C/3_shuihupo.jpg" class="avatar_pic">
+            </a>
+        </div>
+        <div class="user-info d-flex justify-content-center flex-column">
+            <p class="name csdn-tracking-statistics tracking-click" data-mod="popu_379">
+                <a href="https://blog.csdn.net/shuihupo" target="_blank" class="" id="uid">shuihupo</a>
+            </p>
+                    </div>
+                <div class="opt-box d-flex justify-content-center flex-column">
+            <span  class="csdn-tracking-statistics tracking-click" data-mod="popu_379">
+                <a class="btn btn-sm btn-red-hollow" id="btnAttent">关注</a>
+            </span>
+                    </div>
+            </div>
+    <div class="data-info d-flex item-tiling">
+                <dl class="text-center" title="50">
+                        <dt><a href="https://blog.csdn.net/shuihupo?t=1">原创</a></dt>
+            <dd><a href="https://blog.csdn.net/shuihupo?t=1"><span class="count">50</span></a></dd>
+                    </dl>
+        <dl class="text-center" id="fanBox" title="6">
+            <dt>粉丝</dt>
+            <dd><span class="count" id="fan">6</span></dd>
+        </dl>
+        <dl class="text-center" title="9">
+            <dt>喜欢</dt>
+            <dd><span class="count">9</span></dd>
+        </dl>
+        <dl class="text-center" title="4">
+            <dt>评论</dt>
+            <dd><span class="count">4</span></dd>
+        </dl>
+    </div>
+    <div class="grade-box clearfix">
+        <dl>
+            <dt>等级：</dt>
+            <dd>
+                <a href="https://blog.csdn.net/home/help.html#level" title="3级,点击查看等级说明" target="_blank">
+                    <svg class="icon icon-level" aria-hidden="true">
+                        <use xlink:href="#csdnc-bloglevel-3"></use>
+                    </svg>
+                </a>
+            </dd>
+        </dl>
+        <dl>
+            <dt>访问：</dt>
+            <dd title="11598">
+                1万+            </dd>
+        </dl>
+        <dl>
+            <dt>积分：</dt>
+            <dd title="610">
+                610            </dd>
+        </dl>
+        <dl title="94708">
+            <dt>排名：</dt>
+            <dd>9万+</dd>
+        </dl>
+    </div>
+        <div class="badge-box d-flex">
+        <span>勋章：</span>
+                        <a class="icon-badge" title="持之以恒">
+            <svg class="icon" aria-hidden="true">
+                <use xlink:href="#csdnc-m-lasting"></use>
+            </svg>
+            <div class="icon-arrow"></div>
+            <div class="grade-detail-box item2">
+                <div class="pos-box">
+                    <div class="left-box d-flex justify-content-center align-items-center flex-column">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#csdnc-m-lasting"></use>
+                        </svg>
+                        <p>持之以恒</p>
+                    </div>
+                    <div class="right-box d-flex justify-content-center align-items-center">
+                        授予每个自然月内发布4篇或4篇以上原创或翻译IT博文的用户。不积跬步无以至千里，不积小流无以成江海，程序人生的精彩需要坚持不懈地积累！
+                    </div>
+                </div>
+            </div>
+        </a>
+                            </div>
+    </div>
+		    <div class="csdn-tracking-statistics mb8 box-shadow" data-pid="blog" data-mod="popu_4" style="height:250px;">
+    <div class="aside-content text-center" id="cpro_u2734133">
+      <!-- 广告位：PC-博客内页-百度联盟-300x250 --><script type="text/javascript" src="//rabc1.iteye.com/common/production/web/z3n86.js?lg=yyovfyh"></script>    </div>
+</div>
+		    <div id="asideHotArticle" class="aside-box">
+	<h3 class="aside-title">热门文章</h3>
+	<div class="aside-content">
+		<ul class="hotArticle-list csdn-tracking-statistics tracking-click" data-mod="popu_521">
+							<li>
+					<a href="https://blog.csdn.net/shuihupo/article/details/79714949">终于，Python安装JPype1（2018新）</a>
+					<p class="read">阅读量：<span>1920</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/shuihupo/article/details/79862004">（总）百度AI 平台API调用</a>
+					<p class="read">阅读量：<span>1172</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/shuihupo/article/details/80905641">linux 程序被Killed，如何精准查看日志</a>
+					<p class="read">阅读量：<span>1093</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/shuihupo/article/details/79734462">python2代码转换python3(2018新)</a>
+					<p class="read">阅读量：<span>774</span></p>
+				</li>
+							<li>
+					<a href="https://blog.csdn.net/shuihupo/article/details/80930801">python学习 文本特征提取(二) CountVectorizer  TfidfVectorizer 中文处理</a>
+					<p class="read">阅读量：<span>717</span></p>
+				</li>
+					</ul>
+	</div>
+</div>
+		    <div id="asideNewArticle" class="aside-box">
+    <h3 class="aside-title">最新文章</h3>
+    <div class="aside-content">
+        <ul class="inf_list clearfix csdn-tracking-statistics tracking-click" data-mod="popu_382">
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/shuihupo/article/details/82990052" target="_blank">python小点dian儿：DataFrame 取一列类型series 或者 DataFrame</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/shuihupo/article/details/82947712" target="_blank">Python 打印显示设置</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/shuihupo/article/details/82947612" target="_blank">python小点dian儿 读取特殊存储数据</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/shuihupo/article/details/82864427" target="_blank">Linux  下载文件到windows本地</a>
+            </li>
+                        <li class="clearfix">
+                <a href="https://blog.csdn.net/shuihupo/article/details/82842524" target="_blank">Python小点dian儿: 按列条件筛选、删除DataFrame的行</a>
+            </li>
+                    </ul>
+    </div>
+</div>
+		    <div id="asideCategory" class="aside-box flexible-box">
+    <h3 class="aside-title">个人分类</h3>
+    <div class="aside-content">
+        <ul>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/shuihupo/article/category/7468986">
+                    <span class="title oneline">日常学习小点</span>
+                    <span class="count float-right">17篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/shuihupo/article/category/7502777">
+                    <span class="title oneline">文本挖掘好书推荐</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/shuihupo/article/category/7523139">
+                    <span class="title oneline">实践中问题解决</span>
+                    <span class="count float-right">3篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/shuihupo/article/category/7523175">
+                    <span class="title oneline">协同办公</span>
+                    <span class="count float-right">4篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/shuihupo/article/category/7524980">
+                    <span class="title oneline">python自然语言</span>
+                    <span class="count float-right">14篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/shuihupo/article/category/7542913">
+                    <span class="title oneline">安装</span>
+                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/shuihupo/article/category/7574063">
+                    <span class="title oneline">API调用</span>
+                    <span class="count float-right">5篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/shuihupo/article/category/7601807">
+                    <span class="title oneline">文件夹位置</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/shuihupo/article/category/7685367">
+                    <span class="title oneline">文件</span>
+                    <span class="count float-right">2篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/shuihupo/article/category/7729915">
+                    <span class="title oneline">python模块</span>
+                    <span class="count float-right">8篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/shuihupo/article/category/7773272">
+                    <span class="title oneline">linux</span>
+                    <span class="count float-right">4篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/shuihupo/article/category/7835996">
+                    <span class="title oneline">django</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/shuihupo/article/category/7837941">
+                    <span class="title oneline">小点点</span>
+                    <span class="count float-right">9篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/shuihupo/article/category/7927538">
+                    <span class="title oneline">资料</span>
+                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/shuihupo/article/category/8026959">
+                    <span class="title oneline">Python操作</span>
+                    <span class="count float-right">9篇</span>
+                </a>
+            </li>
+                        <li>
+                <a class="clearfix" href="https://blog.csdn.net/shuihupo/article/category/8054663">
+                    <span class="title oneline">数据挖掘初步</span>
+                    <span class="count float-right">3篇</span>
+                </a>
+            </li>
+                    </ul>
+    </div>
+        <p class="text-center">
+        <a class="btn btn-link-blue flexible-btn" data-fbox="aside-archive">展开</a>
+    </p>
+    </div>
+		    <div id="asideNewComments" class="aside-box">
+    <h3 class="aside-title">最新评论</h3>
+    <div class="aside-content">
+        <ul class="newcomment-list">
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/shuihupo/article/details/79862004#comments">（总）百度AI 平台API调用</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/shuihupo" class="user-name" target="_blank">shuihupo</a>：[reply]weixin_41394137[/reply]读入txt文件，读取内容可以是str的...                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/shuihupo/article/details/79862004#comments">（总）百度AI 平台API调用</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/weixin_41394137" class="user-name" target="_blank">weixin_41394137</a>：[reply]shuihupo[/reply]
+谢谢谢啦!!☆⌒(*＾-゜)v  我是想以文本文件...                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/shuihupo/article/details/79862004#comments">（总）百度AI 平台API调用</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/shuihupo" class="user-name" target="_blank">shuihupo</a>：[reply]weixin_41394137[/reply] 
+现在怎么样呢。这个是严参照百度官方...                </p>
+            </li>
+                        <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/shuihupo/article/details/79862004#comments">（总）百度AI 平台API调用</a>
+                <p class="comment">
+                    <a href="https://my.csdn.net/weixin_41394137" class="user-name" target="_blank">weixin_41394137</a>：你好，我的文本很长，是不是就不适用于您的这个示例额？ 因为总是报错                </p>
+            </li>
+                    </ul>
+    </div>
+</div>
+		    <div id="asideArchive" class="aside-box flexible-box">
+    <h3 class="aside-title">归档</h3>
+    <div class="aside-content">
+        <ul class="archive-list">
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/shuihupo/article/month/2018/10">
+                    2018年10月                    <span class="count float-right">4篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/shuihupo/article/month/2018/09">
+                    2018年9月                    <span class="count float-right">9篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/shuihupo/article/month/2018/08">
+                    2018年8月                    <span class="count float-right">11篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/shuihupo/article/month/2018/07">
+                    2018年7月                    <span class="count float-right">9篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/shuihupo/article/month/2018/06">
+                    2018年6月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/shuihupo/article/month/2018/05">
+                    2018年5月                    <span class="count float-right">3篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/shuihupo/article/month/2018/04">
+                    2018年4月                    <span class="count float-right">7篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/shuihupo/article/month/2018/03">
+                    2018年3月                    <span class="count float-right">9篇</span>
+                </a>
+            </li>
+                        <!--归档统计-->
+            <li>
+                <a href="https://blog.csdn.net/shuihupo/article/month/2018/02">
+                    2018年2月                    <span class="count float-right">1篇</span>
+                </a>
+            </li>
+                    </ul>
+    </div>
+        <p class="text-center">
+        <a class="btn btn-link-blue flexible-btn" data-fbox="aside-archive">展开</a>
+    </p>
+    </div>
+		    		<div id="asideFooter">
+			
+		<div class="aside-box">
+						<script type="text/javascript" src="//rabc1.iteye.com/common/site/resource/nqnl.js?mhzzpw=gzj"></script>
+					</div>
+				<div class="aside-box">
+			<div class="persion_article">
+			</div>
+		</div>
+	</div>
+</aside>
+<script src="https://csdnimg.cn/pubfooter/js/publib_footer-1.0.3.js" data-isfootertrack="false" type="text/javascript"></script>
+<script>
+	$("a.flexible-btn").click(function(){
+		$(this).parents('div.aside-box').removeClass('flexible-box');
+		$(this).remove();
+	})
+</script>
+</div>
+<div class="mask-dark"></div>
+<div class="pulllog-box" style="display: block;">
+	<div class="pulllog clearfix">
+		<span class="text float-left">
+            <div id="dmp_ad_69"><div id="kp_box_75" data-track-view='{"mod":"kp_popu_75","con":",,"}'><div style="float:left;margin-right:5px;border:1px solid #f13d3d;padding:2px 5px 0px 5px;">
+<a href="https://www.csdn.net/2018dev/?utm_source=blogtextlink" target="_blank" style="color:#f13d3d;font-weight:bold;text-decoration:none;">开发者调查</a>
+</div>
+
+<div style="float:left;margin-right:5px;border:1px solid #000;padding:2px 5px 0px 5px;background:#000;">
+<a href="http://ai2018.csdn.net/?utm_source=bkxxl" target="_blank" style="color:#fff;font-weight:bold;text-decoration:none;">AI开发者大会日程曝光</a>
+</div>
+
+<div style="float:left;margin-right:5px;border:1px solid #f13d3d;padding:2px 5px 0px 5px;">
+<a href="https://gitchat.csdn.net/?utm_source=wzl" target="_blank" style="color:#f13d3d;font-weight:bold;text-decoration:none;">告别知识焦虑，即刻启程</a>
+</div>
+
+<div style="float:left;">
+<script type="text/javascript" src="//rabc1.iteye.com/common/js/ndr3h.js?b=wosyvccl"></script>
+</div></div><script>$(function(){csdn.track.viewCheck($("#kp_box_75"));});</script></div>            		</span>
+		<div class="pulllog-btn float-right clearfix">
+            <div class="float-left csdn-tracking-statistics tracking-click" data-mod="popu_557">
+                <a class="pulllog-login">登录</a>
+            </div>
+            <div class="pulllog-sigin float-left csdn-tracking-statistics tracking-click" data-mod="popu_558">
+                <a href="https://passport.csdn.net/account/mobileregister" target="_blank">注册</a>
+            </div>
+            <button class="btn-close">
+                <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#csdnc-times"></use>
+                </svg>
+            </button>
+		</div>
+	</div>
+</div>
+<div id="loginWrap" style="display:none"></div>
+<div class="tool-box">
+	<ul class="meau-list">
+		<li class="btn-like-box ">
+			<button class=" low-height hover-box btn-like " title="点赞">
+				<svg class="icon active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-thumbsup-ok"></use>
+				</svg>
+				<svg class="icon no-active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-thumbsup"></use>
+				</svg>
+				<span class="hover-show text-box text">
+					<span class="no-active">点赞</span>
+					<span class="active">取消点赞</span>
+				</span>
+				<p>0</p>
+			</button>
+		</li>
+		<li class="">
+						<a class="btn-comments low-height hover-box" title="写评论" href="#commentBox">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-comments"></use>
+				</svg>
+				<span class="hover-show text">评论</span>
+				<p class="">
+										</p>
+			</a>
+		</li>
+		<li class="toc-container-box" id="liTocBox">
+			<button class="btn-toc low-height hover-box" title="目录">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-contents"></use>
+				</svg>
+				<span class="hover-show text">目录</span>
+			</button>
+			<div class="toc-container">
+				<div class="pos-box">
+					<div class="icon-arrow"></div>
+					<div class="scroll-box">
+						<div class="toc-box"></div>
+					</div>
+				</div>
+				<div class="opt-box">
+					<button class="btn-opt prev nomore" title="向上">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#csdnc-chevronup"></use>
+						</svg>
+					</button>
+					<button class="btn-opt next">
+						<svg class="icon" aria-hidden="true">
+							<use xlink:href="#csdnc-chevrondown"></use>
+						</svg>
+					</button>
+				</div>
+			</div>
+		</li>
+		<li>
+			<button class="btn-bookmark low-height hover-box" title="收藏">
+				<svg class="icon active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-bookmark-ok"></use>
+				</svg>
+				<svg class="icon no-active hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-bookmark"></use>
+				</svg>
+					<span class="hover-show text">收藏</span>
+				<!-- <span class="hover-show text-box text">
+					<span class="no-active">收藏</span>
+					<span class="active">取消收藏</span>
+				</span> -->
+			</button>
+		</li>
+				<li class="bdsharebuttonbox">
+			<button class="btn-comments low-height hover-box" >
+				<a href="#" class="bds_weixin clear-share-style" data-cmd="weixin" title="手机看"></a>
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-wechat"></use>
+				</svg>
+				<span class="hover-show text text3">
+					手机看
+				</span>
+			</button>
+		</li>
+							<li class="widescreen-hide">
+				<a class="btn-comments low-height hover-box" href="https://blog.csdn.net/shuihupo/article/details/81416381" title="python 日常问题 ReadTimeoutError （ pip 指定 安装源方法安装）">
+					<svg class="icon hover-hide" aria-hidden="true">
+						<use xlink:href="#csdnc-shangyiye"></use>
+					</svg>
+					<span class="hover-show text text3">上一篇</span>
+				</a>
+			</li>
+								<li class="widescreen-hide">
+			<a class="btn-comments hover-box low-height" href="https://blog.csdn.net/shuihupo/article/details/81451254" title="python  分词器比较">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-xiayiye"></use>
+				</svg>
+				<span class="hover-show text text3">下一篇</span>
+			</a>
+		</li>
+						<li class="bdsharebuttonbox _360_interactive"style="margin-top: 8px;">
+			<script type="text/javascript" src="//cjhd.mediav.com/js/interactive_plugin.js"></script> 
+			<style>
+				#_360_interactive > *{
+					 margin-left: -8px;
+				}
+			</style>
+			<div id="_360_interactive" > 
+				<script> INTERACTIVE_PLUGIN.render({ showid : 'N0ufqn', w: 60, h: 60, type: 'click', placeholderId: '_360_interactive' }); </script> 
+			</div>
+			<img src="//img-ads.csdn.net/2016/201608021757063065.png" style="margin: 0 auto;display: block;" alt="">
+		</li>
+	  
+		<!-- 宽屏更多按钮 -->
+		<li class="widescreen-more">
+			<a class="btn-comments chat-ask-button low-height hover-box" title="快问" href="#chatqa">
+				<svg class="icon hover-hide" aria-hidden="true">
+					<use xlink:href="#csdnc-more"></use>
+				</svg>
+				<span class="hover-show text">更多</span>
+				
+			</a>
+			<ul class="widescreen-more-box">
+													<li class="widescreen-more">
+						<a class="btn-comments low-height hover-box" href="https://blog.csdn.net/shuihupo/article/details/81416381" title="python 日常问题 ReadTimeoutError （ pip 指定 安装源方法安装）">
+							<svg class="icon hover-hide" aria-hidden="true">
+								<use xlink:href="#csdnc-shangyiye"></use>
+							</svg>
+							<span class="hover-show text text3">上一篇</span>
+						</a>
+					</li>
+																<li class="widescreen-more">
+					<a class="btn-comments hover-box low-height" href="https://blog.csdn.net/shuihupo/article/details/81451254" title="python  分词器比较">
+						<svg class="icon hover-hide" aria-hidden="true">
+							<use xlink:href="#csdnc-xiayiye"></use>
+						</svg>
+						<span class="hover-show text text3">下一篇</span>
+					</a>
+				</li>
+							</ul>
+		</li>
+	</ul>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'https://csdnimg.cn/static/api/js/share.js?v=89860594'];</script>
+<script>
+    var recommendCount = 10;
+    recommendCount = recommendCount > 1 ? (recommendCount + (recommendCount>6 ? 2 : 1)) : recommendCount;
+    var articleTit = "分词工具  结巴个人词典构造";
+    var ChannelId = 2;
+    var articleId = "81436633";
+    var commentscount = 0;
+    var islock = false;
+    var curentUrl = "https://blog.csdn.net/shuihupo/article/details/81436633";
+    var myUrl = "https://my.csdn.net/";
+    //1禁止评论，2正常
+    var commentAuth = 2;
+    //百度搜索
+    var baiduKey = "%E7%BB%93%E5%B7%B4%E5%88%86%E8%AF%8D+%E5%8A%A0%E8%BD%BD%E8%AF%8D%E5%85%B8";
+    var needInsertBaidu = false;
+    // 代码段样式
+    var codeStyle = 'tomorrow-night-eighties';
+		var highlight = ["\u5206\u8bcd","\u5de5\u5177","\u7ed3\u5df4","\u4e2a\u4eba","\u8bcd\u5178","\u6784\u9020"];//高亮数组
+		// 相关推荐博主数据
+    var RecommendBlogExpertList = [{"user_name":"pipisorry","nick_name":"pipisorry","avatar":"https:\/\/avatar.csdn.net\/5\/5\/8\/3_pipisorry.jpg","is_expert":true,"article_count":604},{"user_name":"qq_28743951","nick_name":"AISeek_2018","avatar":"https:\/\/avatar.csdn.net\/9\/4\/3\/3_qq_28743951.jpg","is_expert":false,"article_count":88},{"user_name":"churximi","nick_name":"churximi","avatar":"https:\/\/avatar.csdn.net\/F\/B\/1\/3_churximi.jpg","is_expert":false,"article_count":58},{"user_name":"zhang89xiao","nick_name":"zhang89xiao","avatar":"https:\/\/avatar.csdn.net\/0\/D\/A\/3_zhang89xiao.jpg","is_expert":false,"article_count":219},{"user_name":"qq_35078631","nick_name":"Assassin__is__me","avatar":"https:\/\/avatar.csdn.net\/1\/B\/6\/3_qq_35078631.jpg","is_expert":false,"article_count":194},{"user_name":"daizongxue","nick_name":"\u5cb1\u5b97\u96ea","avatar":"https:\/\/avatar.csdn.net\/9\/0\/E\/3_daizongxue.jpg","is_expert":false,"article_count":27},{"user_name":"taohuaxinmu123","nick_name":"JustDo-IT","avatar":"https:\/\/avatar.csdn.net\/1\/5\/6\/3_taohuaxinmu123.jpg","is_expert":false,"article_count":85},{"user_name":"u012483103","nick_name":"sinkpuer","avatar":"https:\/\/avatar.csdn.net\/4\/C\/8\/3_u012483103.jpg","is_expert":false,"article_count":3},{"user_name":"Luzaofa","nick_name":"Luzaofa","avatar":"https:\/\/avatar.csdn.net\/5\/8\/3\/3_luzaofa.jpg","is_expert":false,"article_count":47},{"user_name":"rav009","nick_name":"\u7231\u77e5\u83dc","avatar":"https:\/\/avatar.csdn.net\/1\/F\/8\/3_rav009.jpg","is_expert":false,"article_count":322}];
+		
+		var articleType = 1;
+		var CopyrightContent = '欢迎分享和转载，请注明出处 shuihupo：https://blog.csdn.net/shuihupo.同时,本博客部分会在云南省高校数据化运营管理工程中心博客同步。欢迎沟通交流：linyimeng1001@foxmail.com';
+</script>
+<script src="https://csdnimg.cn/public/sandalstrap/1.4/js/sandalstrap.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/vendor/pagination/paging.js"></script>
+<script src='https://csdnimg.cn/public/common/gotop/js/goTop-v1.0.min.js?v201803151422'></script>
+<script>
+    GoTop({
+        right: 8,
+        hasReport: true,
+        reportFun: function() {
+            showReport(false,"分词工具  结巴个人词典构造");
+        }
+    })
+</script>
+<script src="https://g.csdnimg.cn/login-box/1.0.1/login-box.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/js/common-ff25a7a98a.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/js/detail-e018839fe9.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/themes/skin-yellow/skin-yellow-9376486353.min.js"></script>
+<script src="https://csdnimg.cn/search/baidu_search-1.1.2.js?v=201802071056&autorun=true&install=true&keyword=%E7%BB%93%E5%B7%B4%E5%88%86%E8%AF%8D+%E5%8A%A0%E8%BD%BD%E8%AF%8D%E5%85%B8"  type="text/javascript"></script>
+</body>
+<!-- 第四范式SDK -->
+
+<!-- 高亮未与 markdown兼容  -->
+<script type="text/javascript" src="https://static-blog.csdn.net/mdeditor/public/res/bower-libs/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            "HTML-CSS": {
+                    linebreaks: { automatic: true, width: "94%container" },
+                    imageFont: null
+            },
+            tex2jax: {
+                preview: "none"
+            },
+            mml2jax: {
+                preview: 'none'
+            }
+    });
+</script>
+</html>

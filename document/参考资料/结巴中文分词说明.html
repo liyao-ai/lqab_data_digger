@@ -1,0 +1,228 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="gb2312">
+<meta name="applicable-device" content="mobile" />
+<meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8">
+<title>结巴中文分词说明</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel='stylesheet' href='https://statics.2cto.com/css/css.css' type='text/css' media='all' />
+<script src="https://statics.2cto.com/js/jquery.min.js"></script>
+<script src="https://statics.2cto.com/js/wapcommon.js"></script>
+<meta name="description" content="">
+<script type="application/ld+json">
+        {
+            "@context": "https://zhanzhang.baidu.com/contexts/cambrian.jsonld",
+            "@id": "http://www.2cto.com/net/201607/530926.html",
+            "appid":"1582932264975392",//熊掌号id
+            "pubDate": "2016-07-27T10:44:53",
+			"upDate":"2016-07-27T16:17:03"
+        }
+</script>
+<!-- 请置于所有广告位代码之前 -->
+<script src="https://statics.2cto.com/js/mgg.js"></script>
+</head>
+<body>
+<div class="header">
+    <div class="header-container">
+        <div class="header-main">
+            
+            <div class="header-center">
+                <a href="/"><img src="https://statics.2cto.com/css/images/mlogo.png"></a>
+            </div>
+            
+        </div>
+        
+    </div>   
+</div>
+<div class="menu-tips">
+	<img src="http://statics.2cto.com/images/list_67.952941176471px_1187674_easyicon.net.png">
+</div>
+<nav class="menu"> 
+	<div class="menu-nav-wrap">
+		<ul class="menu-nav">
+          	<li><a href="/news/">资讯</a></li>
+            <li><a href="/article/">安全</a></li>
+            <li><a href="/kf/">编程</a></li>
+            <li><a href="/database/">数据库</a></li>
+            <li><a href="/os/">系统</a></li>
+		</ul>
+	</div>
+	<div class="pa-menu">
+	    <ul>
+			<li><a href="/soft/">下载</a></li>
+			<li><a href="/ym/">源码</a></li>
+			<li><a href="/net/">网络</a></li>
+			<li><a href="/zz/">站长</a></li>
+			<li><a href="/zz/jingyan/">经验</a></li>
+			<li><a href="/zz/seo/">SEO</a></li>
+			<li><a href="/zz/wangzhuan/">创业</a></li>
+			<li><a href="/zz/tuiguang/">推广</a></li>
+			<li><a href="/px/">考试</a></li>
+			<li><a href="/ebook/">电子书</a></li>
+			<li><a href="/qq/">QQ</a></li>
+			<li><a href="/special/">专题</a></li>
+            <li><a href="/tag/">标签</a></li>
+		</ul>
+	</div>
+</nav>
+<script>
+$(function($) {
+	$(".menu-tips").click(function(){
+		$('.pa-menu').toggleClass('hover');
+		 if ($('.pa-menu').hasClass("hover")){
+			$('.hide_height').css('height',$('.pa-menu').height());
+		 }else{
+			$('.hide_height').css('height','0');
+		 }
+	});
+	$("img[data-original^='http']").hide();
+});
+</script>
+<div class="m-ibox"><script type="text/javascript">Meitu_A_D("wap_1");</script></div>
+<div class="m_l_menu"><a href="https://www.2cto.com/">首页</a><span> > </span><a href="https://www.2cto.com/net/">网络</a> > <a href="https://www.2cto.com/net/cloud/">云计算</a> > </div>
+<article class="article-cont">
+	<div class="brief bgF8F8F8">
+		<h1>结巴中文分词说明</h1>
+		<div class="msg">2016-07-27 																					</div>
+          </div>
+          <div class="brief bgF8F8F8">
+			<div class="brieftext">
+<p class="f14 green">现在开源的中文分词工具，有IK、MMseg4j、THULAC、Ansj、Jieba、HanLP等，其中最近还在更新并维护的，也是目前分词效果比较优秀的要属于Ansj、Jieba、HanLP了。</p>
+</div>
+	</div>
+	<div class="content bgF8F8F8 f14">
+		<div>
+			<p>结巴分词介绍</p>
+<p>现在开源的中文分词工具，有IK、MMseg4j、THULAC、Ansj、Jieba、HanLP等，其中最近还在更新并维护的，也是目前分词效果比较优秀的要属于Ansj、Jieba、HanLP了。</p>
+<p>之前我写过Ansj分词器的介绍说明博客，现在细谈一下Jieba分词的详细思路及其实现过程。</p>
+<p>结巴分词主页</p>
+<p>结巴分词的github主页地址是：https://github.com/fxsjy/jieba(python版)，原作者fxsjy是用python写的，后来有网友写了其他<a href="https://www.2cto.com/kf" target="_blank" class="keylink">编程</a>语言的版本。</p>
+<p>目前官方页面推荐的java版结巴分词地址是：https://github.com/huaban/jieba-analysis(java版)，这个java版的结巴分词只有针对搜索引擎分词的功能，我在这个之上做了优化改进，并添加了词性标志功能后，已经pull request 给作者piaolingxue了。</p>
+<p>我改进后的结巴分词的java版地址是：https://github.com/shibing624/xmnlp ，该项目还在完善中，欢迎大家fork。</p>
+<p>结巴分词简介</p>
+<p>特点</p>
+<p>支持三种分词模式：</p>
+<p>精确模式，试图将句子最精确地切开，适合文本分析;全模式，把句子中所有的可以成词的词语都扫描出来，速度非常快，但是不能解决歧义;搜索引擎模式，在精确模式的基础上，对长词再次切分，提高召回率，适合用于搜索引擎分词。支持繁体分词支持自定义词典</p>
+<p>算法</p>
+<p>基于前缀词典实现高效的词图扫描，生成句子中汉字所有可能成词情况所构成的有向无环图 (DAG) 采用了动态规划查找最大概率路径，找出基于词频的最大切分组合对于未登录词，采用了基于汉字成词能力的 HMM 模型，使用了 Viterbi 算法</p>
+<p>分词过程</p>
+<p>基于Trie树结构实现词图扫描，生成成词情况的有向无环图</p>
+<p>Tire树</p>
+<p>这个需要先了解trie树的python实现，结巴分词自带了一个叫做dict.txt的词典，里面有2万多条词，包含了词条出现的次数和词性(这个词典是清华大学、中科院等基于2014年人民日报语料等资源训练，词性是国标汉语词性)。这个第一条的trie树结构的词图扫描，说的就是把这2万多条词语，放到一个trie树中，而trie树是有名的前缀树，也就是说一个词语的前面几个字一样，就表示他们具有相同的前缀，就可以使用trie树来存储，具有查找速度快的优势。</p>
+<p>你可能会想到把dict.txt中所有的词汇全部删掉，然后再试试结巴能不能分词，结果会发现：结巴依然能够分词，不过分出来的词，大部分的长度为2。这个就是第三条，基于HMM来预测分词了。</p>
+<p>DAG有向无环图</p>
+<p>这个是后一句的“生成句子中汉字所有可能成词情况所构成的有向无环图”，意思是给定一个句子，要你分词，对这个句子进行生成有向无环图。切分词图是为了消除分词中的歧异，提高切分准确度，需要找出一句话所有可能的词，生成全切分词图。如果对有向无环图想有更深入理解请google。</p>
+<p>作者是怎么切分的呢?</p>
+<p>根据dict.txt生成trie树对待分词句子，根据dict.txt生成的trie树，生成DAG,实际上通俗的说，就是对待分词句子，根据给定的词典进行查词典操作，生成几种可能的句子切分 DAG是什么?记录了啥呢? jieba(python版)<a href="https://www.2cto.com/ym/" target="_blank" class="keylink">源码</a>中记录的是句子中某个词的开始位置，从0到n-1(n为句子的长度)，每个开始位置作为字典的键，value是个list，其中保存了可能的词语的结束位置(通过查字典得到词，开始位置+词语的长度得到结束位置)</p>
+<p>举个栗子:</p>
+<p>一个简单的DAG： {0:[1,2,3]}</p>
+<p>表示0位置开始，在1，2，3位置都是词</p>
+<p>就是说0~1，0~2，0~3这三个起始位置之间的字符，在dict.txt中是词语</p>
+<p>采用了动态规划查找最大概率路径，找出基于词频的最大切分组合</p>
+<p>动态规划</p>
+<p>这个在一些大学课程中讲了的，忘记的同学请google，我的博客之前也介绍过动态规划问题。</p>
+<p>查找最大概率路径</p>
+<p>源码中讲字典在生成trie树的同时，也把每个词的出现次数转换为了频率。动态规划中：</p>
+<p>先查找待分词句子中已经切分好的词语，对该词语查找该词语出现的频率(次数/总数)，如果没有该词(既然是基于词典查找，应该是有的)，就把词典中出现频率最小的那个词语的频率作为该词的频率，也就是说P(某词语)=FREQ.get(&amp;lsquo;某词语&amp;rsquo;,min_freq)，然后根据动态规划查找最大概率路径的方法，对句子从右往左反向计算最大概率(一些教科书上可能是从左往右，这里反向是因为汉语句子的重心经常落在后面，就是落在右边，因为通常情况下形容词太多，后面的才是主干，因此，从右往左计算，正确率要高于从左往右计算，这个类似于逆向最大匹配)，P(NodeN)=1.0，P(NodeN-1)=P(NodeN)*Max(P(倒数第一个词))…依次类推，最后得到最大概率路径，得到最大概率的切分组合。</p>
+<p>对于未登录词，采用了HMM模型，使用了Viterbi算法</p>
+<p>未登录词</p>
+<p>什么意思?其实就是词典 dict.txt 中没有记录的词。上面说了，把 dict.txt 中的所有词语都删除了，结巴分词一样可以分词，就是说的这个。</p>
+<p>怎么做到的?</p>
+<p>这个就基于jieba采用的HMM模型了，中文词汇按照BEMS四个状态来标记。</p>
+<p>BEMS:</p>
+<p>B是开始begin位置</p>
+<p>E是end是结束位置</p>
+<p>M是middle是中间位置</p>
+<p>S是singgle，单独成词的位置</p>
+<p>采用了状态为(B,E,M,S)这四种状态来标记中文词语，比如北京可以标注为 BE，即 北/B 京/E，表示“北”是开始位置，“京”是结束位置，“中华民族”可以标注为BMME，就是开始-中间-中间-结束。</p>
+<p>概率表</p>
+<p>经过对大量语料的训练，得到了finalseg目录下的三个概率表文件(来自结巴项目的issues)：</p>
+<p>prob_trans.py 位置转换概率，即B(开头)，M(中间)，E(结尾)，S(独立成词)四种状态的转移概率</p>
+<p>{&amp;lsquo;B&amp;rsquo;: {&amp;lsquo;E&amp;rsquo;: 0.8518218565181658, &amp;lsquo;M&amp;rsquo;: 0.14817814348183422},</p>
+<p>&amp;lsquo;E&amp;rsquo;: {&amp;lsquo;B&amp;rsquo;: 0.5544853051164425, &amp;lsquo;S&amp;rsquo;: 0.44551469488355755},</p>
+<p>&amp;lsquo;M&amp;rsquo;: {&amp;lsquo;E&amp;rsquo;: 0.7164487459986911, &amp;lsquo;M&amp;rsquo;: 0.2835512540013088},</p>
+<p>&amp;lsquo;S&amp;rsquo;: {&amp;lsquo;B&amp;rsquo;: 0.48617017333894563, &amp;lsquo;S&amp;rsquo;: 0.5138298266610544}}</p>
+<p>P(E|B) = 0.851， P(M|B) = 0.149，说明当我们处于一个词的开头时，下一个字是结尾的概率要远高于下一个字是中间字的概率，符合我们的直觉，因为二个字的词比多个字的词更常见。</p>
+<p>prob_emit.py 位置到单字的发射概率，比如P(“和”|M)表示一个词的中间出现“和”这个字的概率</p>
+<p>prob_start.py 词语以某种状态开头的概率，其实只有两种：要么是B，要么是S。这个就是起始向量，就是HMM<a href="https://www.2cto.com/os/" target="_blank" class="keylink">系统</a>的最初模型状态</p>
+<p>实际上，BEMS之间的转换有点类似于二元模型，就是两个词之间的转移二元模型考虑一个单词后出现另外一个单词的概率，是N元模型中的一种。</p>
+<p>举个栗子：</p>
+<p>“中国”之后出现”北京”的概率大于“中国”之后出现“北海”的概率</p>
+<p>也就是：中国北京 比 中国北海 出现的概率大些，更有可能是一个词语。</p>
+<p>不过，作者这里应该不是用的二元分词模型的，这里的BEMS只提供了单个汉字之间的转换，发射概率，并没有提供粒度更大的，基于词语的发射和转移概率。给定一个待分词的句子，就是观察序列，对HMM(BEMS)四种状态的模型来说，就是为了找到一个最佳的BEMS序列，这个就需要使用viterbi算法来得到这个最佳的隐藏状态序列，具体的python版的viterbi算法请看维基百科的维特比算法。</p>
+<p>通过概率表和viterbi算法，就可以得到一个概率最大的BEMS序列，按照B打头，E结尾的方式，对待分词的句子重新组合，就得到了分词结果。</p>
+<p>举个栗子：</p>
+<p>带分词的句子： “全世界都在学中国话”</p>
+<p>BEMS序列： [S,B,E,S,S,S,B,E,S]</p>
+<p>把连续的BE凑合到一起得到一个词，单独的S放单，就得到一个分词结果了:</p>
+<p>得到全/S 世界/BE 都/S 在/S 学/S 中国/BE 话/S 从而将句子切分为词语。</p>
+<p>以上，完成中文分词，对于上面的解释有任何术语不理解，请使用google。</p>
+		</div>
+	</div>
+	<div class="bor">
+<div class="titbg pl15">相关文章</div>
+<div class="reltag">
+<ul class="fl list02">
+		  <li><a href="https://m.2cto.com/net/201606/517866.html" title="ansj中文分词说明">ansj中文分词说明</a></li>  <li><a href="https://m.2cto.com/net/201606/517867.html" title="中文分词原理和实现">中文分词原理和实现</a></li>  <li><a href="https://m.2cto.com/net/201609/545790.html" title="Solr入门之官方文档6.0阅读笔记系列(十)">Solr入门之官方文档6.0阅读笔记系列(十)</a></li>  <li><a href="https://m.2cto.com/net/201611/568965.html" title="spark中文编码处理">spark中文编码处理</a></li>  <li><a href="https://m.2cto.com/net/201612/577784.html" title="Hive学习：用中文创建表名和字段">Hive学习：用中文创建表名和字段</a></li>  <li><a href="https://m.2cto.com/net/201701/585267.html" title="Lucene5中编写自定义同义词分词器（基于IK中文分词器）二">Lucene5中编写自定义同义词分词器（基于IK中文分词器</a></li>  <li><a href="https://m.2cto.com/net/201704/622155.html" title="mapreduce中文版中文翻译">mapreduce中文版中文翻译</a></li>  <li><a href="https://m.2cto.com/net/201706/649808.html" title="elasticsearch中ANSJ中文分词处理">elasticsearch中ANSJ中文分词处理</a></li>  <li><a href="https://m.2cto.com/net/201707/659900.html" title="大数据体系详解(0002天)">大数据体系详解(0002天)</a></li>  <li><a href="https://m.2cto.com/net/201708/664100.html" title="kubernetes1.7新特：kubectl支撑中文字符集">kubernetes1.7新特：kubectl支撑中文字符集</a></li>	</ul>
+
+</div>
+<!--reltag end-->
+</div>
+<div class="bor">
+<div class="titbg pl15">最新文章</div>
+<div class="m-ibox">
+<!--2cto_wap4 -->
+<script type="text/javascript">Meitu_A_D("wap_4");</script>
+</div>
+<div class="reltag">
+<ul class="fl list02">
+		  <li><a href="https://m.2cto.com/net/201810/781294.html">powerdesigner的导入excel插件</a></li>  <li><a href="https://m.2cto.com/net/201810/781292.html">sparkSQL学习</a></li>  <li><a href="https://m.2cto.com/net/201810/781291.html">Hadoop子模块的介绍</a></li>  <li><a href="https://m.2cto.com/net/201809/780764.html">Ambari的安装准备</a></li>  <li><a href="https://m.2cto.com/net/201809/780632.html">ubuntu配置ssh</a></li>  <li><a href="https://m.2cto.com/net/201809/780615.html">yum常用选项解析</a></li>  <li><a href="https://m.2cto.com/net/201809/780611.html">Spark运行模式之SparkonYarn</a></li>  <li><a href="https://m.2cto.com/net/201809/780574.html">LinuxUbuntu切换用户root</a></li>  <li><a href="https://m.2cto.com/net/201809/780558.html">redis安装教程</a></li>  <li><a href="https://m.2cto.com/net/201809/780143.html">大数据集群清理缓存解析</a></li>	</ul>
+
+</div>
+<!--reltag end-->
+</div>
+<div class="bor">
+<div class="titbg pl15">热点推荐</div>
+<div class="m-ibox"><script type="text/javascript">Meitu_A_D("wap_5");</script></div>
+<div class="m-ibox"><script type="text/javascript">Meitu_A_D("wap_2");</script></div>
+<div class="reltag">
+<ul class="fl list02">
+			</ul>
+
+</div>
+<!--reltag end-->
+</div>
+
+</article>
+<div class="footer">
+	<div class="nav">
+		<p>
+			<a href="/">首页</a><a href="/news/it/">IT资讯</a><a href="/article/xitong/">系统安全</a><a href="/article/net/">网络安全</a>
+		</p>
+		<p>
+			<a href="/kf/web/">WEB开发</a><a href="/kf/ware/">软件开发</a><a href="/kf/yidong/">移动开发</a><a href="/kf/qianduan/">WEB前端</a>
+		</p>
+		<p>
+			<a href="/kf/all/">综合编程</a><a href="/os/windows/">电脑技巧</a><a href="/zz/">站长</a><a href="/ebook/">电子书</a>
+		</p>
+	</div>
+	<p>红黑联盟&nbsp;版权所有</p>
+	<p>Copyright&nbsp;&copy; 2017 <a href="https://www.2cto.com">www.2cto.com</a> All rights reserved.</p>
+	<p><a rel="nofollow" href="http://www.miibeian.gov.cn/" target="_blank">赣ICP备12001941号-32</a></p>
+</div><div class="hide"><script type="text/javascript" src="https://statics.2cto.com/js/tj.js"></script>
+<script type="text/javascript" src="https://statics.2cto.com/js/baidu_js_push.js"></script>
+<script type="text/javascript">usertongji("转转晨")</script>
+</div>
+<!-- 广告位：2cto_悬浮 -->
+<script type="text/javascript" async="" src="https://gg.dsxdn.com/2cto/xf.js"></script>
+<div class="hide">
+<script type="text/javascript">
+var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cspan id='cnzz_stat_icon_1258398875'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "w.cnzz.com/c.php%3Fid%3D1258398875' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1260439972'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "w.cnzz.com/c.php%3Fid%3D1260439972' type='text/javascript'%3E%3C/script%3E"));</script>
+	</div>
+</body>
+</html>
